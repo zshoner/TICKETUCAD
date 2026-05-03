@@ -1,0 +1,14 @@
+RewriteEngine On
+RewriteBase /TICKETUCAD/
+
+# Redirigir raíz al login
+RewriteRule ^$ inicio-sesion [R=302,L]
+
+# Ruta amigable para el login
+RewriteRule ^inicio-sesion/?$ app/views/pages/login.html [L,NC]
+
+# Ruta amigable para el panel de administrador
+RewriteRule ^panel-administrador/?$ app/views/pages/padmin.html [L,NC]
+
+# Ruta amigable para formulario
+RewriteRule ^formulario-usuario/?$ app/views/forms/form_user.html [L,NC]

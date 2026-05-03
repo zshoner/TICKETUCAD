@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador - Cerrar Ticket</title>
+</head>
+<body style="background-color: #152036; font-family: Arial; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+
+    <div style="background: white; color: #333; padding: 30px; border-radius: 8px; text-align: center;">
+        <h2>Simulador de Cierre de Ticket</h2>
+        <p>Ingresa el ID del ticket para simular que un admin lo cerró:</p>
+        
+        <form action="cerrar_ticket.php" method="POST">
+            <input type="number" name="ticket_id" placeholder="Ej: 1" required style="padding: 10px; font-size: 16px; width: 80%; margin-bottom: 15px;">
+            <br>
+            <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer;">
+                Cerrar Ticket Ahora
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

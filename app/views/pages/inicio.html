@@ -1,0 +1,200 @@
+<!-- Vista de Inicio — se carga dentro de padmin.html -->
+<div class="welcome-view">
+
+    <style>
+        .welcome-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - var(--header-h) - 56px);
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        /* Círculo animado con avatar */
+        .welcome-avatar-ring {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 28px;
+        }
+        .welcome-avatar-ring::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: conic-gradient(#2563eb, #4d9fff, #7c3aed, #2563eb);
+            animation: spin 4s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .welcome-avatar-inner {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e5fd4, #2563eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            z-index: 1;
+            border: 4px solid var(--bg-base);
+        }
+
+        /* Texto de bienvenida */
+        .welcome-label {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent-2);
+            margin-bottom: 10px;
+        }
+        .welcome-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .welcome-title span {
+            background: linear-gradient(90deg, #4d9fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .welcome-role {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+        }
+
+        /* Tarjeta de fecha y hora */
+        .welcome-datetime-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 32px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0,0,0,.3);
+        }
+        .datetime-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .datetime-block i {
+            font-size: 20px;
+            color: var(--accent-2);
+            margin-bottom: 4px;
+        }
+        .datetime-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .datetime-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .datetime-divider {
+            width: 1px;
+            height: 50px;
+            background: var(--border);
+        }
+
+        /* Mensaje motivacional */
+        .welcome-quote {
+            margin-top: 32px;
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 380px;
+            line-height: 1.7;
+        }
+        .welcome-quote strong {
+            color: var(--accent-2);
+        }
+
+        @media (max-width: 600px) {
+            .welcome-datetime-card { flex-direction: column; gap: 16px; padding: 20px 24px; }
+            .datetime-divider { width: 60px; height: 1px; }
+            .welcome-title { font-size: 26px; }
+        }
+    </style>
+
+    <!-- Avatar con inicial del usuario -->
+    <div class="welcome-avatar-ring">
+        <div class="welcome-avatar-inner" id="wi-avatar">A</div>
+    </div>
+
+    <div class="welcome-label" id="wi-label">Bienvenido al Sistema</div>
+    <h2 class="welcome-title">¡Hola, <span id="wi-nombre">Usuario</span>!</h2>
+    <p class="welcome-role" id="wi-rol">· TICKET UCAD</p>
+
+    <!-- Fecha y hora en vivo -->
+    <div class="welcome-datetime-card">
+        <div class="datetime-block">
+            <i class="bi bi-calendar3"></i>
+            <div class="datetime-value" id="wi-fecha">—</div>
+            <div class="datetime-label">Fecha</div>
+        </div>
+        <div class="datetime-divider"></div>
+        <div class="datetime-block">
+            <i class="bi bi-clock-fill"></i>
+            <div class="datetime-value" id="wi-hora">—</div>
+            <div class="datetime-label">Hora</div>
+        </div>
+        <div class="datetime-divider"></div>
+        <div class="datetime-block">
+            <i class="bi bi-sun-fill"></i>
+            <div class="datetime-value" id="wi-dia">—</div>
+            <div class="datetime-label">Día</div>
+        </div>
+    </div>
+
+    <p class="welcome-quote">
+        Tienes <strong id="wi-tickets">12</strong> tickets pendientes hoy.<br>
+        ¡Que tengas un excelente día de trabajo!
+    </p>
+
+    <script>
+        (function() {
+            const dias   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+            const meses  = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+            function actualizarReloj() {
+                const now = new Date();
+                const h   = String(now.getHours()).padStart(2,'0');
+                const m   = String(now.getMinutes()).padStart(2,'0');
+                const s   = String(now.getSeconds()).padStart(2,'0');
+                document.getElementById('wi-hora').textContent  = `${h}:${m}:${s}`;
+                document.getElementById('wi-fecha').textContent = `${now.getDate()} ${meses[now.getMonth()]} ${now.getFullYear()}`;
+                document.getElementById('wi-dia').textContent   = dias[now.getDay()];
+            }
+
+            actualizarReloj();
+            setInterval(actualizarReloj, 1000);
+
+            function aplicarUsuario(nombre, rol) {
+                document.getElementById('wi-nombre').textContent = nombre;
+                document.getElementById('wi-avatar').textContent = nombre.charAt(0).toUpperCase();
+                document.getElementById('wi-rol').textContent    = rol ? `${rol} · TICKET UCAD` : 'TICKET UCAD';
+            }
+
+            // sessionStorage ya tiene los datos (padmin.js esperó a sesion.php antes de cargar esta vista)
+            const nombre = sessionStorage.getItem('ucad_nombre') || 'Administrador';
+            const rol    = sessionStorage.getItem('ucad_rol')    || '';
+            aplicarUsuario(nombre, rol);
+        })();
+    </script>
+</div>

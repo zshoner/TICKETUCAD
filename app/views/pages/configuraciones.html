@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Configuraciones del Sistema - Ucad Tiket</title>
+    <link rel="stylesheet" href="../../../recursos/libs/bootstrap4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../../../recursos/libs/fontawesome/css/all.min.css"/>
+    <style>
+        /* === Variables del tema === */
+        :root {
+            --primary:  #083466;
+            --accent:   #ec5b13;
+            --bg-dark:  #061421;
+            --surface:  #0a1d2e;
+            --border:   rgba(8, 52, 102, 0.3);
+        }
+
+        /* === Base === */
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background: linear-gradient(160deg, #000000 0%, #000d1f 25%, #083466 70%, #0a1d2e 100%);
+            background-attachment: fixed;
+            background-size: cover;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* === Top Nav === */
+        .top-nav {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+        }
+        .nav-brand { color: #f1f5f9; font-size: 1.1rem; font-weight: 700; }
+
+        /* === Brand icon === */
+        .brand-icon {
+            background-color: var(--primary);
+            border-radius: 0.5rem;
+            padding: 6px 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /* === Buscador === */
+        .search-wrapper { position: relative; }
+        .search-wrapper .fa-search {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 13px;
+        }
+        .search-input {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding-left: 2.2rem;
+        }
+        .search-input::placeholder { color: #64748b; }
+        .search-input:focus {
+            background-color: var(--bg-dark);
+            border-color: var(--primary);
+            color: #e2e8f0;
+            box-shadow: 0 0 0 2px rgba(8,52,102,0.4);
+        }
+
+        /* === Botones nav === */
+        .btn-light {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: #94a3b8;
+        }
+        .btn-light:hover { background-color: rgba(8,52,102,0.2); color: #fff; }
+
+        /* === Main === */
+        main { padding: 2rem 0; }
+
+        /* === Títulos === */
+        .page-title  { font-size: 1.75rem; font-weight: 700; color: #f1f5f9; }
+        .page-subtitle { color: #64748b; font-size: 0.9rem; margin-top: 0.2rem; }
+
+        /* === Cards === */
+        .config-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .card-header-custom {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--surface);
+        }
+        .card-header-custom h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .text-primary-custom { color: #93c5fd; }
+
+        /* === Botón agregar === */
+        .btn-primary-custom {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.45rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            transition: background-color 0.15s;
+        }
+        .btn-primary-custom:hover { background-color: #0a4a8a; color: #fff; text-decoration: none; }
+
+        /* === Botón link gestionar === */
+        .btn-link-custom {
+            color: #93c5fd;
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .btn-link-custom:hover { text-decoration: underline; color: #60a5fa; }
+
+        /* === Tablas === */
+        .config-table { color: #e2e8f0; }
+        .config-table thead th {
+            background-color: rgba(8,52,102,0.25);
+            color: #93c5fd;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border);
+        }
+        .config-table td, .config-table th { border-color: var(--border); vertical-align: middle; padding: 0.85rem 1.25rem; }
+        .config-table tbody tr:hover { background-color: rgba(8,52,102,0.12); }
+        .config-table strong { color: #f1f5f9; }
+        .text-muted { color: #64748b !important; }
+
+        /* === Botones acción === */
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 4px 6px;
+            cursor: pointer;
+            color: #64748b;
+            border-radius: 0.4rem;
+            transition: all 0.15s;
+        }
+        .btn-action.edit:hover  { background-color: rgba(8,52,102,0.2); color: #93c5fd; }
+        .btn-action.delete:hover { background-color: rgba(239,68,68,0.15); color: #f87171; }
+
+        /* === Badges prioridad === */
+        .badge-critica {
+            background-color: rgba(239,68,68,0.15);
+            color: #f87171;
+            border: 1px solid rgba(239,68,68,0.25);
+            font-size: 0.65rem; font-weight: 700;
+            padding: 3px 10px; border-radius: 9999px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .badge-alta {
+            background-color: rgba(249,115,22,0.15);
+            color: #fb923c;
+            border: 1px solid rgba(249,115,22,0.25);
+            font-size: 0.65rem; font-weight: 700;
+            padding: 3px 10px; border-radius: 9999px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .badge-baja {
+            background-color: rgba(59,130,246,0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59,130,246,0.25);
+            font-size: 0.65rem; font-weight: 700;
+            padding: 3px 10px; border-radius: 9999px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        /* === Dots estado === */
+        .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .dot-green  { background-color: #4ade80; }
+        .dot-yellow { background-color: #fbbf24; }
+        .dot-gray   { background-color: #64748b; }
+    </style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav class="top-nav">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+
+            <!-- Brand -->
+            <div class="col-md-auto d-flex align-items-center" style="gap:0.6rem;">
+                <span class="brand-icon">
+                    <i class="fas fa-ticket-alt text-white"></i>
+                </span>
+                <span class="nav-brand">Ucad Tiket</span>
+            </div>
+
+            <!-- Buscador -->
+            <div class="col-md-5 col-12 my-2 my-md-0">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input class="form-control search-input" placeholder="Buscar configuraciones..." type="text"/>
+                </div>
+            </div>
+
+            <!-- Acciones derecha -->
+            <div class="col-md d-flex justify-content-end align-items-center" style="gap:0.5rem;">
+                <button class="btn btn-light btn-sm rounded p-2">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <button class="btn btn-light btn-sm rounded p-2">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+                <div style="width:1px; height:28px; background:#e2e8f0; margin:0 6px;"></div>
+                <button class="btn btn-light btn-sm rounded p-2">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main>
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="page-title">Configuraciones del Sistema</h2>
+                <p class="page-subtitle">Gestione los parámetros globales del centro de soporte de UCAD.</p>
+            </div>
+        </div>
+
+        <!-- Categorías de Tickets -->
+        <div class="row">
+            <div class="col-12">
+                <div class="config-card">
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <h3>
+                            <i class="fas fa-tags text-primary-custom"></i>
+                            Categorías de Tickets
+                        </h3>
+                        <a href="#" class="btn-primary-custom">
+                            <i class="fas fa-plus"></i>
+                            Agregar Categoría
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table config-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th class="text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Hardware</strong></td>
+                                    <td class="text-muted">Problemas con periféricos, laptops y servidores.</td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-action delete"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Software / ERP</strong></td>
+                                    <td class="text-muted">Instalación de licencias y soporte en aplicaciones.</td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-action delete"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Redes</strong></td>
+                                    <td class="text-muted">Conectividad Wi-Fi, VPN y accesos de red local.</td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-action delete"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Niveles de Prioridad + Estados del Ticket -->
+        <div class="row">
+
+            <!-- Niveles de Prioridad -->
+            <div class="col-md-6">
+                <div class="config-card">
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <h3>
+                            <i class="fas fa-flag text-primary-custom"></i>
+                            Niveles de Prioridad
+                        </h3>
+                        <button class="btn-link-custom">Gestionar</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table config-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Prioridad</th>
+                                    <th>Etiqueta</th>
+                                    <th class="text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Crítica</strong></td>
+                                    <td><span class="badge-critica">Bloqueante</span></td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Alta</strong></td>
+                                    <td><span class="badge-alta">Urgente</span></td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Baja</strong></td>
+                                    <td><span class="badge-baja">Rutinario</span></td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estados del Ticket -->
+            <div class="col-md-6">
+                <div class="config-card">
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <h3>
+                            <i class="fas fa-list-alt text-primary-custom"></i>
+                            Estados del Ticket
+                        </h3>
+                        <button class="btn-link-custom">Gestionar</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table config-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Tipo</th>
+                                    <th class="text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong><span class="dot dot-green"></span>Abierto</strong></td>
+                                    <td class="text-muted">Activo</td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong><span class="dot dot-yellow"></span>En Progreso</strong></td>
+                                    <td class="text-muted">Activo</td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong><span class="dot dot-gray"></span>Cerrado</strong></td>
+                                    <td class="text-muted">Finalizado</td>
+                                    <td class="text-right">
+                                        <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<script src="../../../recursos/libs/jquery/jquery.slim.min.js"></script>
+<script src="../../../recursos/libs/bootstrap4/js/bootstrap.bundle.min.js"></script>
+<script src="../../../recursos/libs/sweetalert2/sweetalert2.min.js"></script>
+</body>
+</html>
