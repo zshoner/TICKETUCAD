@@ -31,7 +31,6 @@ async function extraerTickets() {
                     
                     <td class="ticket-id">${ticket['#']}</td>
                     <td class="ticket-subject">${ticket.titulo}</td>
-                    <td>${ticket.descripcion}</td>
                     <td><span class="badge-status badge-open">${ticket.estado_id}</span></td>
                     <td>${ticket.prioridad_id}</td>
                     <td>${ticket.categoria_id}</td>
