@@ -1,24 +1,27 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const formFiltros = document.getElementById('formFiltros');
-    const tablaBody = document.getElementById('tablaReportesBody');
-    const btnLimpiar = document.getElementById('btnLimpiar');
-
+$(document).ready(function() {
+    
+    // Función para actualizar los contadores superiores
     function actualizarContadores(stats) {
-        document.getElementById('countTotal').innerText = stats.total || 0;
-        document.getElementById('countResueltos').innerText = stats.resueltos || 0;
-        document.getElementById('countPendientes').innerText = stats.pendientes || 0;
-        document.getElementById('countVencidos').innerText = stats.vencidos || 0;
+        if(document.getElementById('countTotal')){
+            document.getElementById('countTotal').innerText = stats.total || 0;
+            document.getElementById('countResueltos').innerText = stats.resueltos || 0;
+            document.getElementById('countPendientes').innerText = stats.pendientes || 0;
+            document.getElementById('countVencidos').innerText = stats.vencidos || 0;
+        }
     }
 
-    formFiltros.addEventListener('submit', function(e) {
+    // Delegación para el botón GENERAR (Submit del Formulario)
+    $(document).on('submit', '#formFiltros', function(e) {
         e.preventDefault();
         
-        const formData = new FormData(formFiltros);
+        const tablaBody = document.getElementById('tablaReportesBody');
+        const formData = new FormData(this);
         const params = new URLSearchParams(formData).toString();
         
         tablaBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Procesando datos...</td></tr>';
 
-        fetch(`../../models/reportes/get_reportes.php?${params}`)
+        // Ruta absoluta para evitar fallos por .htaccess
+        fetch(`/TICKETUCAD/app/models/reportes/get_reportes.php?${params}`)
             .then(res => res.json())
             .then(json => {
                 if (json.status === 'error') throw new Error(json.message);
@@ -46,14 +49,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 actualizarContadores(json.stats);
             })
             .catch(err => {
-                Swal.fire('Error', err.message, 'error');
+                // Asegúrate de tener SweetAlert2 cargado en el proyecto
+                if(typeof Swal !== 'undefined') {
+                    Swal.fire('Error', err.message, 'error');
+                }
                 tablaBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error de conexión.</td></tr>';
             });
     });
 
-    btnLimpiar.addEventListener('click', () => {
-        formFiltros.reset();
-        tablaBody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Defina los filtros y presione "Generar Vista".</td></tr>';
+    // Delegación para el botón LIMPIAR
+    $(document).on('click', '#btnLimpiar', function() {
+        const form = document.getElementById('formFiltros');
+        const tablaBody = document.getElementById('tablaReportesBody');
+        
+        if(form) form.reset();
+        if(tablaBody) tablaBody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Defina los filtros y presione "Generar Vista".</td></tr>';
+        
         actualizarContadores({total: 0, resueltos: 0, pendientes: 0, vencidos: 0});
     });
 });

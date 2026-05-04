@@ -12,3 +12,7 @@ RewriteRule ^panel-administrador/?$ app/views/pages/padmin.html [L,NC]
 
 # Ruta amigable para formulario
 RewriteRule ^formulario-usuario/?$ app/views/forms/form_user.html [L,NC]
+
+# Ruta amigable para evitar la redirección al generar reportes
+RewriteRule ^reportes-sistema/?$ app/views/pages/reportes.html [L,NC]
+
