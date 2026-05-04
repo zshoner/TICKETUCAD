@@ -34,6 +34,7 @@ async function cargarSesionUsuario() {
 // antes de que el script de inicio.html se ejecute y los intente leer.
 cargarSesionUsuario().then(() => cargarVista('inicio'));
 
+
 // ── URL amigable ──────────────────────────────────────────────────────────────
 if (window.location.pathname !== '/TICKETUCAD/panel-administrador') {
     window.history.replaceState(null, 'Panel Administrador', '/TICKETUCAD/panel-administrador');
@@ -59,6 +60,7 @@ const viewMap = {
     usuarios:     '/TICKETUCAD/app/views/pages/usuarios.html',
     reportes:     '/TICKETUCAD/app/views/pages/reportes.html',
     configuracion:'/TICKETUCAD/app/views/pages/configuraciones.html',
+    tickets:      '/TICKETUCAD/app/views/pages/tickets.html',
 };
 
 async function cargarVista(view) {
@@ -81,7 +83,16 @@ async function cargarVista(view) {
             s.textContent = old.textContent;
             old.replaceWith(s);
         });
-    } catch(err) {
+
+        // Verificamos si la vista que se acaba de cargar es la de tickets
+        if (view === 'tickets') {
+            // Comprobamos que la función exista para evitar errores
+            if (typeof extraerTickets === 'function') {
+                extraerTickets();
+            }
+        }
+    } 
+    catch(err) {
         mainContent.innerHTML = `<div style="padding:40px;text-align:center;color:var(--text-muted)">
             <i class="bi bi-exclamation-circle" style="font-size:40px;color:#f87171"></i>
             <p style="margin-top:12px">No se pudo cargar la vista.</p></div>`;

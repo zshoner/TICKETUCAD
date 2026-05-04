@@ -16,13 +16,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $departamento_id = 1; 
 
     try {
-        // Preparar la consulta SQL (¡Solo con fecha_creacion y fecha_actualizacion!)
-        $sql = "INSERT INTO tickets (titulo, descripcion, usuario_id, estado_id, prioridad_id, categoria_id, departamento_id, fecha_creacion, fecha_actualizacion) 
-                VALUES (:titulo, :descripcion, :usuario_id, :estado_id, :prioridad_id, :categoria_id, :departamento_id, NOW(), NOW())";
+        // --- INICIO LÓGICA DE ASIGNACIÓN AUTOMÁTICA (ROUND-ROBIN) ---
+        
+        // 1. Obtener el ID del último usuario que recibió un ticket
+        // Filtramos con IS NOT NULL por si hay tickets viejos sin asignar
+        $stmt_ultimo = $pdo->query("SELECT asignado_a FROM tickets WHERE asignado_a IS NOT NULL ORDER BY id DESC LIMIT 1");
+        $ultimo_id = $stmt_ultimo->fetchColumn();
+
+        // Si la base de datos es nueva y no hay ningún ticket previo, empezamos desde el 0
+        if (!$ultimo_id) {
+            $ultimo_id = 0;
+        }
+
+        // 2. Buscar el siguiente usuario disponible (ID mayor al último)
+        // OJO: Asumo que tu tabla de usuarios se llama 'usuarios'. Si se llama diferente, cámbialo aquí.
+        $stmt_siguiente = $pdo->prepare("SELECT id FROM usuarios WHERE id > ? ORDER BY id ASC LIMIT 1");
+        $stmt_siguiente->execute([$ultimo_id]);
+        $siguiente_agente = $stmt_siguiente->fetchColumn();
+
+        // 3. Si no hay siguiente (porque era el último de la lista), volvemos al primero
+        if (!$siguiente_agente) {
+            $stmt_primero = $pdo->query("SELECT id FROM usuarios ORDER BY id ASC LIMIT 1");
+            $siguiente_agente = $stmt_primero->fetchColumn();
+        }
+        
+        // --- FIN LÓGICA DE ASIGNACIÓN AUTOMÁTICA ---
+
+
+        // Preparar la consulta SQL (Agregamos 'asignado_a')
+        $sql = "INSERT INTO tickets (titulo, descripcion, usuario_id, estado_id, prioridad_id, categoria_id, departamento_id, asignado_a, fecha_creacion, fecha_actualizacion) 
+                VALUES (:titulo, :descripcion, :usuario_id, :estado_id, :prioridad_id, :categoria_id, :departamento_id, :asignado_a, NOW(), NOW())";
         
         $stmt = $pdo->prepare($sql);
 
-        // Ejecutar la consulta inyectando los valores capturados
+        // Ejecutar la consulta inyectando los valores capturados + EL NUEVO AGENTE
         $stmt->execute([
             ':titulo' => $titulo,
             ':descripcion' => $descripcion,
@@ -30,7 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':estado_id' => $estado_id,
             ':prioridad_id' => $prioridad_id,
             ':categoria_id' => $categoria_id,
-            ':departamento_id' => $departamento_id
+            ':departamento_id' => $departamento_id,
+            ':asignado_a' => $siguiente_agente  // <--- Aquí guardamos el agente que calculamos arriba
         ]);
 
         // Mostrar mensaje de éxito
