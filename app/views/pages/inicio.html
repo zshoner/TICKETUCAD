@@ -173,17 +173,19 @@
             const meses  = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
             function actualizarReloj() {
-                const now = new Date();
-                const h   = String(now.getHours()).padStart(2,'0');
-                const m   = String(now.getMinutes()).padStart(2,'0');
-                const s   = String(now.getSeconds()).padStart(2,'0');
-                document.getElementById('wi-hora').textContent  = `${h}:${m}:${s}`;
+                const now  = new Date();
+                const hora = document.getElementById('wi-hora');
+                if (!hora) { clearInterval(relojId); return; }
+                const h = String(now.getHours()).padStart(2,'0');
+                const m = String(now.getMinutes()).padStart(2,'0');
+                const s = String(now.getSeconds()).padStart(2,'0');
+                hora.textContent = `${h}:${m}:${s}`;
                 document.getElementById('wi-fecha').textContent = `${now.getDate()} ${meses[now.getMonth()]} ${now.getFullYear()}`;
                 document.getElementById('wi-dia').textContent   = dias[now.getDay()];
             }
 
             actualizarReloj();
-            setInterval(actualizarReloj, 1000);
+            const relojId = setInterval(actualizarReloj, 1000);
 
             function aplicarUsuario(nombre, rol) {
                 document.getElementById('wi-nombre').textContent = nombre;

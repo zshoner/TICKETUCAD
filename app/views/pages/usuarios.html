@@ -1,207 +1,54 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Administración de Usuarios - Ucad Tiket</title>
-    <link rel="stylesheet" href="../../../recursos/libs/bootstrap4/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../../../recursos/libs/fontawesome/css/all.min.css"/>
-    <style>
-        /* === Variables del tema === */
-        :root {
-            --primary:     #083466;
-            --accent:      #ec5b13;
-            --bg-dark:     #061421;
-            --surface:     #0a1d2e;
-            --border:      rgba(8, 52, 102, 0.3);
-        }
+<!-- Vista Administración de Usuarios — parcial para padmin.html -->
+<style>
+    .usr-wrap h2  { color: #fff; font-weight: 800; }
+    .usr-wrap p   { color: #93c5fd; }
+    .usr-wrap #lbl_total { color: #4d9fff; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.03em; }
 
-        /* === Base === */
-        body {
-            font-family: 'Public Sans', sans-serif;
-            background: linear-gradient(160deg, #000000 0%, #000d1f 25%, #083466 70%, #0a1d2e 100%);
-            background-attachment: fixed;
-            background-size: cover;
-            color: #e2e8f0;
-            min-height: 100vh;
-        }
+    /* Inputs */
+    .usr-wrap .form-control, .usr-wrap .input-group-text {
+        background-color: #061421; border-color: rgba(8,52,102,0.4); color: #e2e8f0;
+    }
+    .usr-wrap .form-control::placeholder { color: #64748b; }
+    .usr-wrap .form-control:focus { background-color: #061421; border-color: #083466; color: #e2e8f0; box-shadow: 0 0 0 2px rgba(8,52,102,0.4); }
 
-        /* === Navbar === */
-        .navbar {
-            background-color: var(--surface) !important;
-            border-bottom: 1px solid var(--border) !important;
-        }
-        .navbar .font-weight-bold { color: #f1f5f9; }
+    /* Card y tabla */
+    .usr-wrap .card { background-color: #0a1d2e; border: 1px solid rgba(8,52,102,0.3) !important; border-radius: 0.75rem; overflow: hidden; }
+    .usr-wrap .card-footer { background-color: #0a1d2e; border-top: 1px solid rgba(8,52,102,0.3); }
+    .usr-wrap .table { color: #e2e8f0; margin-bottom: 0; }
+    .usr-wrap .table thead.thead-light th { background-color: rgba(8,52,102,0.5); color: #4d9fff; border-bottom: 1px solid rgba(8,52,102,0.4); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .usr-wrap .table tbody tr { background-color: #061421 !important; }
+    .usr-wrap .table tbody tr:nth-child(even) { background-color: #0a1d2e !important; }
+    .usr-wrap .table td, .usr-wrap .table th { border-color: rgba(8,52,102,0.2); vertical-align: middle; }
+    .usr-wrap .table-hover tbody tr:hover { background-color: rgba(37,99,235,0.15) !important; }
 
-        /* === Buscador navbar === */
-        .input-group-text {
-            background-color: var(--bg-dark);
-            border-color: var(--border);
-            color: #94a3b8;
-        }
-        .form-control {
-            background-color: var(--bg-dark);
-            border-color: var(--border);
-            color: #e2e8f0;
-        }
-        .form-control::placeholder { color: #64748b; }
-        .form-control:focus {
-            background-color: var(--bg-dark);
-            border-color: var(--primary);
-            color: #e2e8f0;
-            box-shadow: 0 0 0 2px rgba(8,52,102,0.4);
-        }
+    /* Badges */
+    .usr-wrap .badge { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
+    .usr-wrap .badge-primary   { background-color: rgba(8,52,102,0.5);   color: #93c5fd; border: 1px solid rgba(8,52,102,0.6); }
+    .usr-wrap .badge-secondary { background-color: rgba(100,116,139,0.2); color: #cbd5e1; border: 1px solid rgba(100,116,139,0.3); }
+    .usr-wrap .badge-success   { background-color: rgba(34,197,94,0.1);   color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+    .usr-wrap .badge-danger    { background-color: rgba(239,68,68,0.1);   color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
 
-        /* === Botones nav === */
-        .btn-light {
-            background-color: var(--surface);
-            border-color: var(--border);
-            color: #94a3b8;
-        }
-        .btn-light:hover { background-color: rgba(8,52,102,0.2); color: #fff; }
+    /* Botones */
+    .usr-wrap .btn-primary  { background-color: #083466; border-color: #083466; font-weight: 600; border-radius: 0.5rem; }
+    .usr-wrap .btn-primary:hover { background-color: #0a4a8a; }
+    .usr-wrap .btn-secondary { background-color: rgba(100,116,139,0.2); border-color: rgba(100,116,139,0.3); color: #cbd5e1; }
+    .usr-wrap .btn-outline-primary { border-color: #083466; color: #93c5fd; }
+    .usr-wrap .btn-outline-primary:hover { background-color: rgba(8,52,102,0.3); color: #fff; }
+    .usr-wrap .btn-outline-warning { border-color: #ec5b13; color: #ec5b13; }
+    .usr-wrap .btn-outline-danger  { border-color: #ef4444; color: #f87171; }
 
-        /* === Títulos === */
-        h2.font-weight-bold { color: #f1f5f9; }
-        .text-muted { color: #64748b !important; }
+    /* Modal */
+    .usr-wrap .modal-content { background-color: #0a1d2e; border: 1px solid rgba(8,52,102,0.3); color: #e2e8f0; }
+    .usr-wrap .modal-header  { border-bottom: 1px solid rgba(8,52,102,0.3); }
+    .usr-wrap .modal-footer  { border-top: 1px solid rgba(8,52,102,0.3); }
+    .usr-wrap .modal-title   { color: #f1f5f9; }
+    .usr-wrap .close { color: #94a3b8; }
+    .usr-wrap .modal label   { color: #94a3b8; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; }
+</style>
 
-        /* === Botón primario === */
-        .btn-primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            font-weight: 600;
-            border-radius: 0.5rem;
-        }
-        .btn-primary:hover { background-color: #0a4a8a; border-color: #0a4a8a; }
+<div class="usr-wrap container-fluid mt-4">
 
-        /* === Buscador filtro === */
-        .input-group .form-control.border-left-0 { border-left: none; }
-        .input-group .input-group-text.border-right-0 { border-right: none; }
-
-        /* === Card tabla === */
-        .card {
-            background-color: var(--surface);
-            border: 1px solid var(--border) !important;
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
-        .card-footer {
-            background-color: var(--surface);
-            border-top: 1px solid var(--border);
-        }
-
-        /* === Tabla === */
-        .table { color: #e2e8f0; margin-bottom: 0; }
-        .table thead.thead-light th {
-            background-color: rgba(8, 52, 102, 0.25);
-            color: var(--primary);
-            border-bottom: 1px solid var(--border);
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-        .table td, .table th { border-color: var(--border); vertical-align: middle; }
-        .table-hover tbody tr:hover { background-color: rgba(8,52,102,0.12); }
-
-        /* === Badges iniciales usuario === */
-        .badge.badge-primary.p-2 {
-            background-color: rgba(8,52,102,0.4);
-            color: #93c5fd;
-            border-radius: 0.4rem;
-            font-size: 0.7rem;
-        }
-
-        /* === Badges rol === */
-        .badge-primary  { background-color: rgba(8,52,102,0.5);  color: #93c5fd; border: 1px solid rgba(8,52,102,0.6); }
-        .badge-secondary{ background-color: rgba(100,116,139,0.2); color: #cbd5e1; border: 1px solid rgba(100,116,139,0.3); }
-        .badge-light    { background-color: rgba(100,116,139,0.1); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
-
-        /* === Badges estado === */
-        .badge-success  { background-color: rgba(34,197,94,0.1);  color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
-        .badge-danger   { background-color: rgba(239,68,68,0.1);  color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
-
-        .badge { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em; }
-
-        /* === Botones acción tabla === */
-        .btn-outline-primary { border-color: var(--primary); color: #93c5fd; }
-        .btn-outline-primary:hover { background-color: rgba(8,52,102,0.3); color: #fff; border-color: var(--primary); }
-        .btn-outline-warning { border-color: var(--accent); color: var(--accent); }
-        .btn-outline-warning:hover { background-color: rgba(236,91,19,0.15); color: var(--accent); border-color: var(--accent); }
-        .btn-outline-danger { border-color: #ef4444; color: #f87171; }
-        .btn-outline-danger:hover { background-color: rgba(239,68,68,0.15); color: #f87171; border-color: #ef4444; }
-
-        /* === Paginación === */
-        .page-link {
-            background-color: var(--surface);
-            border-color: var(--border);
-            color: #94a3b8;
-        }
-        .page-link:hover { background-color: rgba(8,52,102,0.2); color: #fff; border-color: var(--border); }
-        .page-item.active .page-link {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
-        }
-
-        /* === Modales === */
-        .modal-content {
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            color: #e2e8f0;
-        }
-        .modal-header {
-            border-bottom: 1px solid var(--border);
-        }
-        .modal-footer {
-            border-top: 1px solid var(--border);
-        }
-        .modal-title { color: #f1f5f9; }
-        .close { color: #94a3b8; }
-        .close:hover { color: #fff; }
-        .modal label { color: #94a3b8; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-        .btn-secondary {
-            background-color: rgba(100,116,139,0.2);
-            border-color: rgba(100,116,139,0.3);
-            color: #cbd5e1;
-        }
-        .btn-secondary:hover { background-color: rgba(100,116,139,0.35); color: #fff; }
-    </style>
-</head>
-<body>
-
-<!-- Top Navigation Bar -->
-<nav class="navbar navbar-light bg-white border-bottom px-3">
-    <div class="container-fluid">
-        <div class="row w-100 align-items-center">
-
-            <!-- Brand -->
-            <div class="col-md-auto d-flex align-items-center">
-                <div class="bg-primary p-2 rounded mr-2">
-                    <i class="fas fa-ticket-alt text-white"></i>
-                </div>
-                <span class="font-weight-bold">Ucad Tiket</span>
-            </div>
-
-
-            <!-- Acciones derecha -->
-            <div class="col-md d-flex justify-content-end align-items-center">
-                <button class="btn btn-light btn-sm mr-2">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <div style="width:1px; height:28px; background:#e2e8f0;" class="mx-2"></div>
-                <button class="btn btn-light btn-sm">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
-
-        </div>
-    </div>
-</nav>
-
-<!-- Main Content -->
-<main class="container mt-4">
-
-    <!-- Page Header + Botón agregar -->
+    <!-- Page Header -->
     <div class="row align-items-center mb-3">
         <div class="col-md-8">
             <h2 class="font-weight-bold mb-1">Administración de Usuarios</h2>
@@ -214,21 +61,23 @@
         </div>
     </div>
 
-    <!-- Buscador filtro -->
+    <!-- Buscador -->
     <div class="row mb-3">
-        <div class="col-md-5">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text bg-light border-right-0">
-                        <i class="fas fa-search text-muted"></i>
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5">
+            <div class="input-group" style="height:42px;">
+                <div class="input-group-prepend" style="height:100%;">
+                    <span class="input-group-text border-right-0 h-100" style="border-radius:0.5rem 0 0 0.5rem; padding: 0 14px;">
+                        <i class="fas fa-search" style="color:#4d9fff; font-size:1rem;"></i>
                     </span>
                 </div>
-                <input type="text" id="inp_buscar" class="form-control border-left-0 bg-light" placeholder="Buscar usuario por nombre o correo..."/>
+                <input type="text" id="inp_buscar" class="form-control border-left-0 h-100"
+                    placeholder="Buscar por nombre o correo..."
+                    style="border-radius:0 0.5rem 0.5rem 0;"/>
             </div>
         </div>
     </div>
 
-    <!-- Tabla de Usuarios -->
+    <!-- Tabla -->
     <div class="row">
         <div class="col-12">
             <div class="card border">
@@ -252,17 +101,14 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Paginación -->
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <small id="lbl_total" class="text-muted">Cargando...</small>
                 </div>
-
             </div>
         </div>
     </div>
 
-</main>
+</div>
 
 <!-- Modal Crear Usuario -->
 <div class="modal fade" id="modal_crear" tabindex="-1">
@@ -276,25 +122,50 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Nombre completo</label>
-                        <input type="text" id="crear_nombre" class="form-control" placeholder="Ej. Roberto González" required/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-user"></i></div>
+                            </div>
+                            <input type="text" id="crear_nombre" class="form-control" placeholder="Ej. Roberto González" required/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Correo electrónico</label>
-                        <input type="email" id="crear_correo" class="form-control" placeholder="usuario@ucad.edu.sv" required/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-envelope"></i></div>
+                            </div>
+                            <input type="email" id="crear_correo" class="form-control" placeholder="usuario@ucad.edu.sv" required/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Nombre de usuario</label>
-                        <input type="text" id="crear_usuario" class="form-control" placeholder="Ej. Aleman2015" required/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-at"></i></div>
+                            </div>
+                            <input type="text" id="crear_usuario" class="form-control" placeholder="Ej. Aleman2015" required/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Contraseña</label>
-                        <input type="password" id="crear_password" class="form-control" placeholder="Mínimo 8 caracteres" required/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-lock"></i></div>
+                            </div>
+                            <input type="password" id="crear_password" class="form-control" placeholder="Mínimo 8 caracteres" required/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Rol</label>
-                        <select id="crear_rol" class="form-control" required>
-                            <option value="">-- Selecciona un rol --</option>
-                        </select>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-shield-alt"></i></div>
+                            </div>
+                            <select id="crear_rol" class="form-control" required>
+                                <option value="">-- Selecciona un rol --</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -319,39 +190,60 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Nombre completo</label>
-                        <input type="text" id="editar_nombre" class="form-control" required/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-user"></i></div>
+                            </div>
+                            <input type="text" id="editar_nombre" class="form-control" required/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Correo electrónico</label>
-                        <input type="email" id="editar_correo" class="form-control" required/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-envelope"></i></div>
+                            </div>
+                            <input type="email" id="editar_correo" class="form-control" required/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Nombre de usuario</label>
-                        <input type="text" id="editar_usuario" class="form-control" required/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-at"></i></div>
+                            </div>
+                            <input type="text" id="editar_usuario" class="form-control" required/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Nueva contraseña <small class="text-muted">(dejar vacío para no cambiar)</small></label>
-                        <input type="password" id="editar_password" class="form-control" placeholder="Nueva contraseña"/>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-lock"></i></div>
+                            </div>
+                            <input type="password" id="editar_password" class="form-control" placeholder="Nueva contraseña"/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Rol</label>
-                        <select id="editar_rol" class="form-control" required>
-                            <option value="">-- Selecciona un rol --</option>
-                        </select>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-shield-alt"></i></div>
+                            </div>
+                            <select id="editar_rol" class="form-control" required>
+                                <option value="">-- Selecciona un rol --</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Actualizar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardar_edicion()"><i class="fas fa-save mr-1"></i>Actualizar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<script src="../../../recursos/libs/jquery/jquery.min.js"></script>
-<script src="../../../recursos/libs/bootstrap4/js/bootstrap.bundle.min.js"></script>
-<script src="../../../recursos/libs/sweetalert2/sweetalert2.min.js"></script>
-<script src="../../../app/controllers/usuarios/usuarios.js"></script>
-</body>
-</html>
+<script src="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.js"></script>
+<script src="/TICKETUCAD/app/controllers/usuarios/usuarios.js"></script>

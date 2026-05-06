@@ -46,7 +46,7 @@ $(function () {
 
 function cargar_roles(){
     $.ajax({
-        url: "../../models/usuarios/listar_roles.php",
+        url: "/TICKETUCAD/app/models/usuarios/listar_roles.php",
         method: "POST",
         data: {},
         dataType: "json",
@@ -76,7 +76,7 @@ function cargar_roles(){
 
 function listar_usuarios(){
     $.ajax({
-        url: "../../models/usuarios/listar.php",
+        url: "/TICKETUCAD/app/models/usuarios/listar.php",
         method: "POST",
         data: {
             busqueda: $("#inp_buscar").val()
@@ -150,7 +150,7 @@ function listar_usuarios(){
 
 function crear_usuario(){
     $.ajax({
-        url: "../../models/usuarios/crear.php",
+        url: "/TICKETUCAD/app/models/usuarios/crear.php",
         method: "POST",
         data: {
             nombre:   $("#crear_nombre").val(),
@@ -198,7 +198,7 @@ function abrir_editar(id, nombre, correo, usuario, rol_id){
 
 function guardar_edicion(){
     $.ajax({
-        url: "../../models/usuarios/editar.php",
+        url: "/TICKETUCAD/app/models/usuarios/editar.php",
         method: "POST",
         data: {
             id:       $("#editar_id").val(),
@@ -247,7 +247,7 @@ function cambiar_estado(id, estado_actual){
     }).then((result) => {
         if(result.isConfirmed){
             $.ajax({
-                url: "../../models/usuarios/cambiar_estado.php",
+                url: "/TICKETUCAD/app/models/usuarios/cambiar_estado.php",
                 method: "POST",
                 data: { id: id },
                 dataType: "json",
@@ -289,7 +289,7 @@ function eliminar_usuario(id, nombre){
     }).then((result) => {
         if(result.isConfirmed){
             $.ajax({
-                url: "../../models/usuarios/eliminar.php",
+                url: "/TICKETUCAD/app/models/usuarios/eliminar.php",
                 method: "POST",
                 data: { id: id },
                 dataType: "json",

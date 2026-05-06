@@ -63,40 +63,14 @@ const viewMap = {
     tickets:      '/TICKETUCAD/app/views/pages/tickets.html',
 };
 
-async function cargarVista(view) {
+function cargarVista(view) {
     if (view === 'dashboard') {
         mainContent.innerHTML = dashboardHTML;
-        // re-inicializar fecha
-        const fEl = document.getElementById('fecha-hoy');
-        if (fEl) fEl.textContent = new Date().toLocaleDateString('es-ES', opts);
         return;
     }
     const url = viewMap[view];
     if (!url) return;
-    try {
-        const res  = await fetch(url);
-        const html = await res.text();
-        mainContent.innerHTML = html;
-        // ejecutar scripts embebidos en la vista cargada
-        mainContent.querySelectorAll('script').forEach(old => {
-            const s = document.createElement('script');
-            s.textContent = old.textContent;
-            old.replaceWith(s);
-        });
-
-        // Verificamos si la vista que se acaba de cargar es la de tickets
-        if (view === 'tickets') {
-            // Comprobamos que la función exista para evitar errores
-            if (typeof extraerTickets === 'function') {
-                extraerTickets();
-            }
-        }
-    } 
-    catch(err) {
-        mainContent.innerHTML = `<div style="padding:40px;text-align:center;color:var(--text-muted)">
-            <i class="bi bi-exclamation-circle" style="font-size:40px;color:#f87171"></i>
-            <p style="margin-top:12px">No se pudo cargar la vista.</p></div>`;
-    }
+    $('#main-content').load(url);
 }
 
 // ── Nav activo + carga de vista ───────────────────────────────────────────────

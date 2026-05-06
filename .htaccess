@@ -16,3 +16,8 @@ RewriteRule ^formulario-usuario/?$ app/views/forms/form_user.html [L,NC]
 # Ruta amigable para evitar la redirección al generar reportes
 RewriteRule ^reportes-sistema/?$ app/views/pages/reportes.html [L,NC]
 
+# Ruta amigable para administración de usuarios
+RewriteRule ^admin-usuarios/?$ app/views/pages/usuarios.html [L,NC]
+
+# Ruta amigable para configuraciones
+RewriteRule ^configuraciones/?$ app/views/pages/configuraciones.html [L,NC]
