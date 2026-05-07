@@ -1,70 +1,76 @@
 $(document).ready(function() {
     
-    // Función para actualizar los contadores superiores
     function actualizarContadores(stats) {
-        if(document.getElementById('countTotal')){
-            document.getElementById('countTotal').innerText = stats.total || 0;
-            document.getElementById('countResueltos').innerText = stats.resueltos || 0;
-            document.getElementById('countPendientes').innerText = stats.pendientes || 0;
-            document.getElementById('countVencidos').innerText = stats.vencidos || 0;
-        }
+        $('#countTotal').text(stats.total || 0);
+        $('#countResueltos').text(stats.resueltos || 0);
+        $('#countPendientes').text(stats.pendientes || 0);
+        $('#countVencidos').text(stats.vencidos || 0);
     }
 
-    // Delegación para el botón GENERAR (Submit del Formulario)
-    $(document).on('submit', '#formFiltros', function(e) {
+    // Delegación limpia para evitar duplicados al recargar la vista
+    $(document).off('click', '#btnGenerarVista').on('click', '#btnGenerarVista', function(e) {
         e.preventDefault();
         
-        const tablaBody = document.getElementById('tablaReportesBody');
-        const formData = new FormData(this);
-        const params = new URLSearchParams(formData).toString();
-        
-        tablaBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Procesando datos...</td></tr>';
+        const params = {
+            inicio: $('#fecha_inicio').val(),
+            fin: $('#fecha_fin').val(),
+            tecnico: $('#sel_tecnico').val(),
+            departamento: $('#sel_depto').val(),
+            estado: $('#sel_estado').val()
+        };
 
-        // Ruta absoluta para evitar fallos por .htaccess
-        fetch(`/TICKETUCAD/app/models/reportes/get_reportes.php?${params}`)
-            .then(res => res.json())
-            .then(json => {
-                if (json.status === 'error') throw new Error(json.message);
+        const tablaBody = $('#tablaReportesBody');
+        tablaBody.html('<tr><td colspan="6" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> Cargando...</td></tr>');
+
+        $.ajax({
+            url: '/TICKETUCAD/app/models/reportes/get_reportes.php',
+            type: 'GET',
+            data: params,
+            dataType: 'json',
+            success: function(json) {
+                if (json.status === 'error') {
+                    tablaBody.html(`<tr><td colspan="6" class="text-center text-danger">${json.message}</td></tr>`);
+                    return;
+                }
                 
-                tablaBody.innerHTML = '';
-                
-                if (json.data.length === 0) {
-                    tablaBody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">No se encontraron resultados.</td></tr>';
+                tablaBody.empty();
+                if (!json.data || json.data.length === 0) {
+                    tablaBody.html('<tr><td colspan="6" class="text-center py-5 text-muted">No se encontraron resultados.</td></tr>');
                 } else {
                     json.data.forEach(t => {
-                        const badgeClass = t.es_final == 1 ? 'badge-success' : 'badge-warning';
-                        const cumplimientoClass = t.es_final == 1 ? 'text-success' : 'text-warning';
-                        
-                        tablaBody.innerHTML += `
+                        const badge = t.es_final == 1 ? 'badge-success' : 'badge-warning';
+                        tablaBody.append(`
                             <tr>
                                 <td class="font-weight-bold text-primary">#${t.id}</td>
                                 <td>${t.tecnico_nombre || 'Sin técnico'}</td>
-                                <td>${t.depto_nombre || 'General'}</td>
+                                <td>${t.depto_nombre}</td>
                                 <td>${t.fecha_creacion}</td>
-                                <td><span class="badge ${badgeClass}">${t.estado_nombre}</span></td>
-                                <td class="${cumplimientoClass} font-weight-bold">${t.cumplimiento}</td>
-                            </tr>`;
+                                <td><span class="badge ${badge}">${t.estado_nombre}</span></td>
+                                <td class="font-weight-bold">${t.cumplimiento}</td>
+                            </tr>
+                        `);
                     });
                 }
-                actualizarContadores(json.stats);
-            })
-            .catch(err => {
-                // Asegúrate de tener SweetAlert2 cargado en el proyecto
-                if(typeof Swal !== 'undefined') {
-                    Swal.fire('Error', err.message, 'error');
-                }
-                tablaBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error de conexión.</td></tr>';
-            });
+                actualizarContadores(json.stats || {});
+            },
+            error: function() {
+                tablaBody.html('<tr><td colspan="6" class="text-center text-danger">Error de comunicación con el servidor.</td></tr>');
+            }
+        });
     });
 
-    // Delegación para el botón LIMPIAR
-    $(document).on('click', '#btnLimpiar', function() {
-        const form = document.getElementById('formFiltros');
-        const tablaBody = document.getElementById('tablaReportesBody');
-        
-        if(form) form.reset();
-        if(tablaBody) tablaBody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Defina los filtros y presione "Generar Vista".</td></tr>';
-        
-        actualizarContadores({total: 0, resueltos: 0, pendientes: 0, vencidos: 0});
+    // Limpiar
+    $(document).off('click', '#btnLimpiar').on('click', '#btnLimpiar', function() {
+        $('#fecha_inicio').val('2026-04-01');
+        $('#fecha_fin').val('2026-04-30');
+        $('#sel_tecnico, #sel_depto, #sel_estado').val('');
+        actualizarContadores({total:0, resueltos:0, pendientes:0, vencidos:0});
+        $('#tablaReportesBody').html('<tr><td colspan="6" class="text-center py-5 text-muted">Defina los filtros y presione "Generar Vista".</td></tr>');
+    });
+
+    // Antes de exportar, pasamos los valores de los filtros a los campos ocultos
+    $('#formExportar').on('submit', function() {
+        $('#h_inicio').val($('#fecha_inicio').val());
+        $('#h_fin').val($('#fecha_fin').val());
     });
 });
