@@ -70,7 +70,11 @@ function cargarVista(view) {
     }
     const url = viewMap[view];
     if (!url) return;
-    $('#main-content').load(url);
+    $('#main-content').load(url, function () {
+        if (view === 'tickets' && typeof extraerTickets === 'function') {
+            extraerTickets();
+        }
+    });
 }
 
 // ── Nav activo + carga de vista ───────────────────────────────────────────────
