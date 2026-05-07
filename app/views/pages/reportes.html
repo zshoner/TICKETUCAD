@@ -1,154 +1,71 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reportes - TICKETUCAD</title>
-    
-    
-    <<link rel="stylesheet" href="/TICKETUCAD/recursos/libs/bootstrap/css/bootstrap.min.css">
-
-    <style>
-        :root {
-            --bg-base:     #0a0f1e;
-            --bg-card:     rgba(255,255,255,0.04);
-            --border:      rgba(255,255,255,0.08);
-            --accent:      #2563eb;
-            --accent-2:    #4d9fff;
-            --text:        #e2e8f0;
-            --text-muted:  #5a7a9a;
-        }
-
-        body {
-            background-color: var(--bg-base); 
-            color: var(--text);
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            min-height: 100vh;
-        }
-
-        /* Banner Principal */
-        .header-banner {
-            background: linear-gradient(135deg, #0d1528 0%, #0a0f1e 100%);
-            color: #ffffff;
-            border-radius: 14px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border);
-            border-left: 5px solid var(--accent);
-        }
-
-        /* Cards Estilo Premium */
-        .card-custom {
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            background: var(--bg-card);
-            backdrop-filter: blur(10px);
-            margin-bottom: 1.5rem;
-        }
-
-        .section-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--accent-2);
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            letter-spacing: 1px;
-        }
-
-        .section-label::before {
-            content: "";
-            display: inline-block;
-            width: 4px; height: 16px;
-            background: var(--accent);
-            margin-right: 8px;
-            border-radius: 2px;
-        }
-
-        /* Inputs y Selects Oscuros */
-        .form-control-custom {
-            background-color: rgba(255,255,255,0.05) !important;
-            border: 1px solid var(--border) !important;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: var(--text) !important;
-        }
-        
-        .form-control-custom:focus {
-            border-color: var(--accent) !important;
-            box-shadow: 0 0 0 0.2rem rgba(37,99,235,0.25);
-        }
-
-        /* Cuadros de Estadísticas */
-        .stat-box {
-            background-color: var(--bg-card);
-            color: #ffffff;
-            padding: 1.2rem;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .stat-box:hover { 
-            transform: translateY(-5px);
-            border-color: var(--accent);
-        }
-
-        /* Tablas */
-        .table-custom {
-            color: var(--text);
-        }
-
-        .table-custom thead th {
-            background-color: rgba(255,255,255,0.02);
-            color: var(--accent-2);
-            border-bottom: 1px solid var(--border);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .table-custom td {
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: rgba(255,255,255,0.02);
-            color: #fff;
-        }
-
-        /* Botones */
-        .btn-export {
-            background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
-            color: #fff;
-            padding: 0.7rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.2);
-        }
-
-        .btn-export:hover { 
-            transform: scale(1.02);
-            color: white;
-            box-shadow: 0 6px 15px rgba(37,99,235,0.4);
-        }
-
-        .btn-generate {
-            background-color: var(--text);
-            color: var(--bg-base);
-            font-weight: 700;
-        }
-    </style>
-</head>
-<body>
+<style>
+    /* Estilos específicos para esta vista */
+    .header-banner { 
+        background: linear-gradient(135deg, #0d1528 0%, #0a0f1e 100%); 
+        border-radius: 14px; 
+        padding: 1.5rem; 
+        margin-bottom: 2rem; 
+        border: 1px solid rgba(255,255,255,0.08); 
+        border-left: 5px solid #2563eb; 
+    }
+    .card-custom { 
+        border: 1px solid rgba(255,255,255,0.08); 
+        border-radius: 14px; 
+        background: rgba(255,255,255,0.04); 
+        backdrop-filter: blur(10px); 
+        margin-bottom: 1.5rem; 
+    }
+    .section-label { 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        color: #4d9fff; 
+        display: flex; 
+        align-items: center; 
+        margin-bottom: 1rem; 
+        letter-spacing: 1px; 
+    }
+    .section-label::before { 
+        content: ""; 
+        display: inline-block; 
+        width: 4px; height: 16px; 
+        background: #2563eb; 
+        margin-right: 8px; 
+        border-radius: 2px; 
+    }
+    .form-control-custom { 
+        background-color: rgba(255,255,255,0.05) !important; 
+        border: 1px solid rgba(255,255,255,0.08) !important; 
+        color: #e2e8f0 !important; 
+        border-radius: 8px; 
+    }
+    .stat-box { 
+        background-color: rgba(255,255,255,0.04); 
+        padding: 1.2rem; 
+        border-radius: 12px; 
+        text-align: center; 
+        border: 1px solid rgba(255,255,255,0.08); 
+    }
+    .table-custom { color: #e2e8f0; }
+    .table-custom thead th { 
+        background-color: rgba(255,255,255,0.02); 
+        color: #4d9fff; 
+        border-bottom: 1px solid rgba(255,255,255,0.08); 
+        text-transform: uppercase; 
+        font-size: 0.75rem; 
+    }
+    .btn-export { 
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); 
+        color: #fff; 
+        padding: 0.7rem 1.5rem; 
+        border-radius: 8px; 
+        font-weight: 600; 
+        border: none; 
+    }
+    .btn-generate { background-color: #e2e8f0; color: #0a0f1e; font-weight: 700; border: none; }
+</style>
 
 <div class="container-fluid py-4">
-    
-    <!-- Banner Superior -->
     <div class="header-banner d-flex justify-content-between align-items-center flex-wrap shadow-sm">
         <div>
             <h2 class="mb-0 font-weight-bold text-white">Reportes del Sistema</h2>
@@ -158,14 +75,13 @@
             <button type="button" id="btnLimpiar" class="btn btn-sm btn-outline-secondary text-white mr-2">
                 <i class="fas fa-undo mr-1"></i> Limpiar
             </button>
-            <button type="submit" form="formFiltros" class="btn btn-sm btn-generate shadow-sm">
+            <button type="button" id="btnGenerarVista" class="btn btn-sm btn-generate shadow-sm">
                 <i class="fas fa-search mr-1"></i> Generar Vista
             </button>
         </div>
     </div>
 
-    <!-- Filtros -->
-    <form id="formFiltros">
+    <div id="filtrosContenedor">
         <div class="row">
             <div class="col-md-4">
                 <div class="card card-custom p-4">
@@ -173,11 +89,11 @@
                     <div class="row">
                         <div class="col-6">
                             <label class="small font-weight-bold text-muted">Desde</label>
-                            <input type="date" name="inicio" class="form-control form-control-custom" value="2026-04-01">
+                            <input type="date" id="fecha_inicio" class="form-control form-control-custom" value="2026-04-01">
                         </div>
                         <div class="col-6">
                             <label class="small font-weight-bold text-muted">Hasta</label>
-                            <input type="date" name="fin" class="form-control form-control-custom" value="2026-04-30">
+                            <input type="date" id="fecha_fin" class="form-control form-control-custom" value="2026-04-30">
                         </div>
                     </div>
                 </div>
@@ -189,21 +105,19 @@
                     <div class="row">
                         <div class="col-4">
                             <label class="small font-weight-bold text-muted">Técnico</label>
-                            <select name="tecnico" class="form-control form-control-custom">
+                            <select id="sel_tecnico" class="form-control form-control-custom">
                                 <option value="">Todos los técnicos</option>
-                                <!-- Se llena dinámicamente -->
                             </select>
                         </div>
                         <div class="col-4">
                             <label class="small font-weight-bold text-muted">Departamento</label>
-                            <select name="departamento" class="form-control form-control-custom">
+                            <select id="sel_depto" class="form-control form-control-custom">
                                 <option value="">Cualquier Departamento</option>
-                                <!-- Se llena dinámicamente -->
                             </select>
                         </div>
                         <div class="col-4">
                             <label class="small font-weight-bold text-muted">Estado</label>
-                            <select name="estado" class="form-control form-control-custom">
+                            <select id="sel_estado" class="form-control form-control-custom">
                                 <option value="">Todos los estados</option>
                                 <option value="Completado">Completado</option>
                                 <option value="En progreso">En progreso</option>
@@ -213,72 +127,34 @@
                 </div>
             </div>
         </div>
-    </form>
-
-    <!-- Indicadores -->
-    <div class="row mb-4">
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box"> 
-                <small class="text-muted text-uppercase">Total Tickets</small> 
-                <span class="d-block h3 mb-0 font-weight-bold" id="countTotal" style="color: var(--accent-2);">0</span> 
-            </div>
-        </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box" style="border-bottom: 3px solid #28a745;"> 
-                <small class="text-muted text-uppercase">Resueltos</small> 
-                <span class="d-block h3 mb-0 font-weight-bold text-success" id="countResueltos">0</span> 
-            </div>
-        </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box" style="border-bottom: 3px solid #ffc107;"> 
-                <small class="text-muted text-uppercase">Pendientes</small> 
-                <span class="d-block h3 mb-0 font-weight-bold" id="countPendientes" style="color: #ffc107;">0</span> 
-            </div>
-        </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box" style="border-bottom: 3px solid #dc3545;"> 
-                <small class="text-muted text-uppercase">Vencidos</small> 
-                <span class="d-block h3 mb-0 font-weight-bold text-danger" id="countVencidos">0</span> 
-            </div>
-        </div>
     </div>
 
-    <!-- Tabla de Resultados -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-6 mb-3"><div class="stat-box"><small class="text-muted">TOTAL</small><span class="d-block h3 font-weight-bold" id="countTotal">0</span></div></div>
+        <div class="col-md-3 col-6 mb-3"><div class="stat-box text-success"><small class="text-muted">RESUELTOS</small><span class="d-block h3 font-weight-bold" id="countResueltos">0</span></div></div>
+        <div class="col-md-3 col-6 mb-3"><div class="stat-box text-warning"><small class="text-muted">PENDIENTES</small><span class="d-block h3 font-weight-bold" id="countPendientes">0</span></div></div>
+        <div class="col-md-3 col-6 mb-3"><div class="stat-box text-danger"><small class="text-muted">VENCIDOS</small><span class="d-block h3 font-weight-bold" id="countVencidos">0</span></div></div>
+    </div>
+
     <div class="card card-custom shadow-sm overflow-hidden">
-        <div class="card-header bg-transparent border-bottom border-secondary py-3">
-            <div class="section-label mb-0">Vista previa de resultados</div>
-        </div>
         <div class="table-responsive">
             <table class="table table-custom table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>ID Ticket</th>
-                        <th>Técnico</th>
-                        <th>Departamento</th>
-                        <th>Fecha Creación</th>
-                        <th>Estado</th>
-                        <th>Cumplimiento SLA</th>
+                        <th>ID Ticket</th><th>Técnico</th><th>Departamento</th><th>Fecha</th><th>Estado</th><th>SLA</th>
                     </tr>
                 </thead>
                 <tbody id="tablaReportesBody">
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="fas fa-filter h2 d-block mb-3 opacity-25"></i>
-                            Defina los filtros y presione "Generar Vista".
-                        </td>
-                    </tr>
+                    <tr><td colspan="6" class="text-center py-5 text-muted">Defina los filtros y presione "Generar Vista".</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Barra de Exportación -->
     <div class="d-flex justify-content-between align-items-center mt-4 card-custom p-3">
-        <form id="formExportar" action="../../models/reportes/exportar_reporte.php" method="POST" class="d-flex align-items-center w-100">
-            <input type="hidden" name="inicio_export" id="hfInicio">
-            <input type="hidden" name="fin_export" id="hfFin">
-            <input type="hidden" name="tec_export" id="hfTec">
-            
+        <form id="formExportar" action="/TICKETUCAD/app/models/reportes/exportar_reporte.php" method="POST" target="_blank" class="d-flex align-items-center w-100">
+            <input type="hidden" name="h_inicio" id="h_inicio">
+            <input type="hidden" name="h_fin" id="h_fin">
             <div class="d-flex align-items-center">
                 <label class="mb-0 mr-3 small font-weight-bold text-muted">FORMATO:</label>
                 <select name="formato_export" class="form-control form-control-sm form-control-custom" style="width: 140px;">
@@ -293,15 +169,5 @@
     </div>
 </div>
 
-<div class="reloj-container">
-    <span id="wi-dia"></span>
-    <span id="wi-fecha"></span>
-    <span id="wi-hora"></span>
-    </div>
-
-<script src="/TICKETUCAD/recursos/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/TICKETUCAD/app/controllers/reportes/reportes.js"></script>
-
-</body>
-</html>
+<script src="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.js"></script>
+<script src="app/controllers/reportes/reportes.js"></script>
