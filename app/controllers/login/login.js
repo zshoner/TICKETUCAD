@@ -44,7 +44,11 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                 timerProgressBar: true,
                 showConfirmButton: false
             }).then(() => {
-                window.location.href = '/TICKETUCAD/app/views/pages/padmin.html';
+                if (data.cambiar_password == 1) {
+    window.location.href = '/TICKETUCAD/cambiar-password';
+} else {
+    window.location.href = '/TICKETUCAD/panel-administrador';
+}
             });
         } else {
             document.getElementById('loginForm').reset();

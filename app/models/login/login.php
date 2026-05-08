@@ -51,7 +51,8 @@ try {
     echo json_encode([
         'success' => true,
         'nombre'  => $user['nombre'],
-        'rol'     => $user['rol']
+        'rol'     => $user['rol'],
+        
     ]);
 
 } catch (PDOException $e) {

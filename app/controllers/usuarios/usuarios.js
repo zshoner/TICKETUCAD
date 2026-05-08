@@ -153,11 +153,10 @@ function crear_usuario(){
         url: "/TICKETUCAD/app/models/usuarios/crear.php",
         method: "POST",
         data: {
-            nombre:   $("#crear_nombre").val(),
-            correo:   $("#crear_correo").val(),
-            usuario:  $("#crear_usuario").val(),
-            password: $("#crear_password").val(),
-            rol_id:   $("#crear_rol").val(),
+            nombre:  $("#crear_nombre").val(),
+            correo:  $("#crear_correo").val(),
+            usuario: $("#crear_usuario").val(),
+            rol_id:  $("#crear_rol").val(),
         },
         dataType: "json",
     }).done(function (response) {
@@ -165,8 +164,8 @@ function crear_usuario(){
             $("#modal_crear").modal("hide");
             $("#form_crear")[0].reset();
             Swal.fire({
-                title: "¡Éxito!",
-                text: response.msg,
+                title: "¡Usuario creado!",
+                html: response.msg + "<br><br><b>Contraseña temporal:</b> <span style='font-size:1.3rem; color:#4d9fff;'>" + response.password_temporal + "</span><br><small>El usuario deberá cambiarla al iniciar sesión.</small>",
                 icon: "success"
             });
             listar_usuarios();

@@ -21,3 +21,5 @@ RewriteRule ^admin-usuarios/?$ app/views/pages/usuarios.html [L,NC]
 
 # Ruta amigable para configuraciones
 RewriteRule ^configuraciones/?$ app/views/pages/configuraciones.html [L,NC]
+# Ruta amigable para cambiar contraseña
+RewriteRule ^cambiar-password/?$ app/views/pages/cambiar_password.html [L,NC]
