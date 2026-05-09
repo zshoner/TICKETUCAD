@@ -21,7 +21,7 @@ if (empty($usuario) || empty($contrasena)) {
 try {
  
     $stmt = $pdo->prepare("
-        SELECT u.id, u.nombre, u.usuario, u.contrasena_hash, u.estado, u.eliminado_en, r.nombre AS rol
+        SELECT u.id, u.nombre, u.usuario, u.contrasena_hash, u.estado, u.eliminado_en,u.cambiar_password,r.nombre AS rol
         FROM usuarios u
         INNER JOIN roles r ON r.id = u.rol_id
         WHERE u.usuario = :usuario
@@ -52,6 +52,7 @@ try {
         'success' => true,
         'nombre'  => $user['nombre'],
         'rol'     => $user['rol'],
+        'cambiar_password' => $user['cambiar_password']
         
     ]);
 
