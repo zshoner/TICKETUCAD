@@ -23,3 +23,11 @@ RewriteRule ^admin-usuarios/?$ app/views/pages/usuarios.html [L,NC]
 RewriteRule ^configuraciones/?$ app/views/pages/configuraciones.html [L,NC]
 # Ruta amigable para cambiar contraseña
 RewriteRule ^cambiar-password/?$ app/views/pages/cambiar_password.html [L,NC]
+
+# Ruta amigable para vista detalle de ticket
+RewriteRule ^vista-ticket/?$ app/views/pages/vista_ticket.html [L,NC]
+
+# Compatibilidad con rutas antiguas de detalle
+RewriteRule ^pages/vista_ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
+RewriteRule ^pages/vista-ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
+RewriteRule ^pages/vista%20ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
