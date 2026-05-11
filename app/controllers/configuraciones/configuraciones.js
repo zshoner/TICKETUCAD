@@ -10,7 +10,13 @@ $(function () {
     $("#form_editar_est").on("submit", function (e) { e.preventDefault(); guardar_edicion_estado(); });
 
     $("#form_crear_pri").on("submit", function (e) { e.preventDefault(); crear_prioridad(); });
-$("#form_editar_pri").on("submit", function (e) { e.preventDefault(); guardar_edicion_prioridad(); });
+    $("#form_editar_pri").on("submit", function (e) { e.preventDefault(); guardar_edicion_prioridad(); });
+
+    $("#tb_categorias").on("click", ".edit-cat", function () {
+        let id     = $(this).data("id");
+        let nombre = $(this).data("nombre");
+        abrir_editar_categoria(id, nombre);
+    });
 });
 function listar_categorias() {
     $.ajax({
@@ -18,12 +24,24 @@ function listar_categorias() {
         method: "POST",
         dataType: "json",
     }).done(function (r) {
-        if (!r.success) return;
+        if (!r.success) {
+        Swal.fire({ title: "¡Atención!", text: r.error, icon: "info" });
+        return;
+}
         let filas = "";
         r.data.forEach(function (c) {
-            filas += "<tr><td>" + c.nombre + "</td></tr>";
-        });
-        $("#tb_categorias").html(filas);
+    let botones =
+        "<button class='btn btn-sm btn-info edit-cat mr-1' data-id='" + c.id + "' data-nombre='" + c.nombre + "'>" +
+            "<i class='fas fa-edit'></i>" +
+        "</button>";
+
+    filas +=
+        "<tr>" +
+            "<td><strong>" + c.nombre + "</strong></td>" +
+            "<td>" + botones + "</td>" +
+        "</tr>";
+});
+    $("#tb_categorias").html(filas);
     });
 }
 

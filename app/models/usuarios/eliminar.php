@@ -12,7 +12,7 @@ try {
         exit();
     }
 
-    $sql = "UPDATE usuarios SET eliminado_en = NOW() WHERE id=$id";
+    $sql = "UPDATE usuarios SET eliminado_en = NOW(), estado = 'inactivo' WHERE id=$id";
     $resultado = mysqli_query($con, $sql);
 
     if($resultado){
