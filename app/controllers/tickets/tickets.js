@@ -127,5 +127,6 @@ function cambiarEstado(idTicket, idNuevoEstado, selectElement) {
 
 // Redirección al compañero
 function verDetalleTicket(idTicket) {
-    window.location.href = `/TICKETUCAD/vista-ticket?id=${idTicket}`;
+    sessionStorage.setItem('ucad_ticket_id', String(idTicket));
+    window.location.href = '/TICKETUCAD/vista-ticket';
 }

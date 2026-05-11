@@ -130,14 +130,38 @@
 
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--line); }
+        .btn-danger { background: var(--danger); color: #fff; }
         .error { color: var(--danger); }
+        .ok { color: #22c55e; }
+
+        select.field-control {
+            width: 100%;
+            margin-top: 6px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: #0b1220;
+            color: var(--text);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .toolbar-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="actions" style="margin-bottom: 10px;">
-            <button class="btn-outline" id="btnVolver">Volver a bandeja</button>
+        <div class="toolbar-top">
+            <button class="btn-outline" type="button" id="btnVolver">Volver a bandeja</button>
+            <button class="btn-danger" type="button" id="btnCerrarTicket">Cerrar ticket</button>
             <span id="estadoCargando" style="color: var(--muted);"></span>
+            <span id="msgAcciones" style="color: var(--muted); font-size: 13px;"></span>
         </div>
 
         <div class="card">
@@ -168,6 +192,8 @@
         </div>
     </div>
 
-    <script src="/TICKETUCAD/app/controllers/tickets/vista_ticket.js"></script>
+    <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.css">
+    <script src="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="/TICKETUCAD/app/controllers/tickets/vista_ticket.js?v=20260510_05"></script>
 </body>
 </html>

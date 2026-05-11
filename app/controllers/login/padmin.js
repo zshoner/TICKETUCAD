@@ -32,7 +32,26 @@ async function cargarSesionUsuario() {
 // ── Arranque: primero sesión, luego vista inicio ──────────────────────────────
 // Se usa await para garantizar que sessionStorage ya tiene nombre y rol
 // antes de que el script de inicio.html se ejecute y los intente leer.
-cargarSesionUsuario().then(() => cargarVista('inicio'));
+cargarSesionUsuario().then(() => {
+    const params = new URLSearchParams(window.location.search);
+    const viewFromQuery = params.get('view');
+    const viewFromStorage = sessionStorage.getItem('ucad_view');
+    const view = (viewFromQuery && viewMap[viewFromQuery]) ? viewFromQuery : viewFromStorage;
+
+    if (window.location.search.includes('view=')) {
+        window.history.replaceState(null, 'Panel Administrador', '/TICKETUCAD/panel-administrador');
+    }
+
+    if (view && viewMap[view]) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        const nav = document.querySelector(`.nav-item[data-view="${view}"]`);
+        if (nav) nav.classList.add('active');
+        cargarVista(view);
+        sessionStorage.removeItem('ucad_view');
+    } else {
+        cargarVista('inicio');
+    }
+});
 
 
 // ── URL amigable ──────────────────────────────────────────────────────────────

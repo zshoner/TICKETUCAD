@@ -12,12 +12,13 @@ try {
     die("Error de conexión a la base de datos: " . $e->getMessage());
 }
 
-$con = mysqli_connect($host, $username, $password, $dbname, $port);
+$con = @mysqli_connect($host, $username, $password, $dbname, $port);
 
-if($con){
+if ($con) {
     $con->set_charset("utf8");
-}else{
-    echo json_encode(array('success'=>false, 'error'=>'No hay conexión a la base de datos'));
-    exit();
+} else {
+    // No interrumpimos aquí: varios endpoints de tickets usan solo PDO.
+    // Evitamos que warnings HTML rompan respuestas JSON en el frontend.
+    $con = null;
 }
 ?>
