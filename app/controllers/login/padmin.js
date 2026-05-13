@@ -12,6 +12,7 @@ async function cargarSesionUsuario() {
         if (data.autenticado) {
             sessionStorage.setItem('ucad_nombre', data.nombre);
             sessionStorage.setItem('ucad_rol',    data.rol);
+            sessionStorage.setItem('ucad_id_rol', data.id_rol);             
         }
     } catch (e) {
         // Si falla el fetch, usar lo que haya en sessionStorage
@@ -77,7 +78,7 @@ const dashboardHTML = mainContent.innerHTML; // guarda el dashboard original
 const viewMap = {
     inicio:       '/TICKETUCAD/app/views/pages/inicio.html',
     usuarios:     '/TICKETUCAD/app/views/pages/usuarios.html',
-    reportes:     '/TICKETUCAD/app/views/pages/reportes.html',
+    reportes:     '/TICKETUCAD/app/views/pages/reportes.php',
     configuracion:'/TICKETUCAD/app/views/pages/configuraciones.html',
     tickets:      '/TICKETUCAD/app/views/pages/tickets.html',
 };
