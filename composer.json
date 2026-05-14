@@ -1,0 +1,17 @@
+{
+    "name": "centrode-monitoreo-orb/ticketucad",
+    "autoload": {
+        "psr-4": {
+            "CentrodeMonitoreoOrb\\Ticketucad\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Esdras Palacios",
+            "email": "esdraspalacios21@gmail.com"
+        }
+    ],
+    "require": {
+        "mpdf/mpdf": "^8.3"
+    }
+}

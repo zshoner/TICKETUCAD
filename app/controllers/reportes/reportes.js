@@ -1,60 +1,102 @@
 $(document).ready(function() {
-    // Variable global para almacenar los datos actuales y poder filtrar localmente
+    // Variable global para filtros locales en los widgets
     let datosLocales = [];
 
-    // 1. Carga inicial de selectores (Técnicos, Deptos, Estados)
-    function inicializarFiltros() {
+    // 1. Llenar los selects al cargar la pagina
+    function cargarSelectores() {
         $.ajax({
-            url: '/TICKETUCAD/app/models/reportes/get_filtros.php',
+            url: 'app/models/reportes/get_filtros.php',
             type: 'GET',
             success: function(res) {
                 if(res.status === 'success') {
-                    let htmlTec = '<option value="">Todos los técnicos</option>';
-                    res.tecnicos.forEach(t => htmlTec += `<option value="${t.id}">${t.nombre}</option>`);
+                    // Cargar Tecnicos
+                    let htmlTec = '<option value="">-- Todos --</option>';
+                    res.tecnicos.forEach(t => {
+                        htmlTec += `<option value="${t.id}">${t.nombre}</option>`;
+                    });
                     $('#sel_tecnico').html(htmlTec);
 
-                    let htmlDep = '<option value="">Cualquier Departamento</option>';
-                    res.departamentos.forEach(d => htmlDep += `<option value="${d.id}">${d.nombre}</option>`);
+                    // Cargar Deptos
+                    let htmlDep = '<option value="">-- Todos --</option>';
+                    res.departamentos.forEach(d => {
+                        htmlDep += `<option value="${d.id}">${d.nombre}</option>`;
+                    });
                     $('#sel_depto').html(htmlDep);
 
-                    let htmlEst = '<option value="">Todos los estados</option>';
-                    res.estados.forEach(e => htmlEst += `<option value="${e.nombre}">${e.nombre}</option>`);
+                    // Cargar Estados
+                    let htmlEst = '<option value="">-- Todos --</option>';
+                    res.estados.forEach(e => {
+                        htmlEst += `<option value="${e.nombre}">${e.nombre}</option>`;
+                    });
                     $('#sel_estado').html(htmlEst);
                 }
             }
         });
     }
 
-    inicializarFiltros();
+    cargarSelectores();
 
-    // 2. Función para renderizar la tabla basada en un array de datos
-    function renderizarTabla(data) {
+    // 2. Funcion para pintar la tabla con correcciones de Fecha y SLA
+    function pintarTabla(data) {
         let rows = '';
+        
         if (data.length > 0) {
             data.forEach(item => {
-                const slaClass = item.sla_status === 'VENCIDO' ? 'text-danger' : 'text-success';
+                // --- CORRECCIÓN: Renderizado de Fecha (13 may 2026) y Hora (12h AM/PM) ---
+                const fechaObj = new Date(item.fecha_creacion);
+                
+                // Formato de fecha corta: 13 may 2026
+                const opcionesFecha = { day: '2-digit', month: 'short', year: 'numeric' };
+                const fechaParte = fechaObj.toLocaleDateString('es-ES', opcionesFecha).replace('.', '');
+
+                // Formato de hora: 11:01 PM
+                const opcionesHora = { hour: '2-digit', minute: '2-digit', hour12: true };
+                const horaParte = fechaObj.toLocaleTimeString('es-ES', opcionesHora).toUpperCase();
+
+                const fechaFinal = `${fechaParte}, ${horaParte}`;
+
+                // --- CORRECCIÓN: Estilos para el SLA (Icono + Badge) ---
+                const esVencido = item.sla_status === 'VENCIDO';
+                const slaColor = esVencido ? '#ef4444' : '#10b981';
+                const slaIcon = esVencido ? 'fa-times-circle' : 'fa-check-circle';
+                const slaBackground = esVencido ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+                const slaBorder = esVencido ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)';
+                
+                // Color para el estado (Badge original)
+                const colorBadge = (item.es_final == 1) 
+                    ? 'border: 1px solid #10b981; color: #10b981;' 
+                    : 'border: 1px solid #3b82f6; color: #3b82f6;';
+
                 rows += `
                     <tr>
-                        <td><strong>#${item.id_ticket}</strong></td>
-                        <td>${item.tecnico_nombre || '<span class="text-muted small">Sin asignar</span>'}</td>
-                        <td>${item.departamento}</td>
-                        <td>${item.fecha_creacion}</td>
-                        <td><span class="badge" style="background:rgba(37,99,235,0.1); color:#60a5fa; border:1px solid rgba(37,99,235,0.2); padding:4px 8px;">${item.estado}</span></td>
-                        <td class="${slaClass}"><strong>${item.sla_status}</strong></td>
+                        <td class="text-white font-weight-bold">#${item.id_ticket}</td>
+                        <td>${item.tecnico_nombre || '<span class="text-muted">Sin asignar</span>'}</td>
+                        <td><small>${item.departamento}</small></td>
+                        <td style="color: #94a3b8; font-size: 0.85rem;">${fechaFinal}</td>
+                        <td>
+                            <span class="badge" style="padding: 5px 10px; ${colorBadge}">
+                                ${item.estado}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; color: ${slaColor}; background: ${slaBackground}; padding: 4px 10px; border-radius: 4px; width: fit-content; font-size: 11px; font-weight: bold; border: 1px solid ${slaBorder};">
+                                <i class="fas ${slaIcon} mr-1"></i> ${item.sla_status}
+                            </div>
+                        </td>
                     </tr>`;
             });
         } else {
-            rows = '<tr><td colspan="6" class="text-center py-5 text-muted">No se encontraron registros coincidentes.</td></tr>';
+            rows = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay registros para mostrar.</td></tr>';
         }
         $('#tablaReportesBody').html(rows);
     }
 
-    // 3. Botón Generar Vista (Consulta al Servidor)
+    // 3. Boton para buscar (AJAX al servidor)
     $('#btnGenerarVista').on('click', function() {
         const btn = $(this);
-        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> BUSCANDO...');
+        btn.prop('disabled', true).text('Buscando...');
 
-        const params = {
+        const filtros = {
             inicio: $('#fecha_inicio').val(),
             fin: $('#fecha_fin').val(),
             tecnico: $('#sel_tecnico').val(),
@@ -63,130 +105,61 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: '/TICKETUCAD/app/models/reportes/get_reportes.php',
+            url: 'app/models/reportes/get_reportes.php',
             type: 'GET',
-            data: params,
+            data: filtros,
             success: function(res) {
                 if (res.status === 'success') {
-                    datosLocales = res.data; // Guardamos para filtros de widgets
-                    renderizarTabla(datosLocales);
+                    datosLocales = res.data; 
+                    pintarTabla(datosLocales);
                     
-                    // Actualizar contadores visuales
+                    // Actualizar los numeritos de los cuadros
                     $('#countTotal').text(res.stats.total);
                     $('#countResueltos').text(res.stats.resueltos);
                     $('#countPendientes').text(res.stats.pendientes);
                     $('#countVencidos').text(res.stats.vencidos);
 
-                    // Sincronizar hiddens para exportación
-                    $('#h_inicio').val(params.inicio);
-                    $('#h_fin').val(params.fin);
+                    // Pasar filtros a los hiddens para el PDF
+                    $('#h_inicio').val(filtros.inicio);
+                    $('#h_fin').val(filtros.fin);
+                    $('#h_tecnico').val(filtros.tecnico);
+                    $('#h_depto').val(filtros.departamento);
+                    $('#h_estado').val(filtros.estado);
                 }
-                btn.prop('disabled', false).html('<i class="fas fa-search mr-1"></i> Generar Vista');
+                btn.prop('disabled', false).text('Generar Vista');
+            },
+            error: function() {
+                btn.prop('disabled', false).text('Generar Vista');
+                alert('Error al conectar con el servidor');
             }
         });
     });
 
-    // 4. Lógica de los Recuadros (Widgets) - Filtro rápido local
+    // 4. Filtro rapido al dar clic en los cuadros (Total, Resueltos, etc)
     $('.stat-box').on('click', function() {
         if (datosLocales.length === 0) return;
 
-        // Quitamos clase activa de otros y ponemos al actual (opcional visual)
-        $('.stat-box').css('border-color', 'rgba(255,255,255,0.08)');
-        $(this).css('border-color', '#2563eb');
-
-        const tipo = $(this).find('.stat-number').attr('id');
+        const idStat = $(this).find('.stat-number').attr('id');
         let filtrados = [];
 
-        switch(tipo) {
-            case 'countTotal':
-                filtrados = datosLocales;
-                break;
-            case 'countResueltos':
-                filtrados = datosLocales.filter(t => t.es_final == 1);
-                break;
-            case 'countPendientes':
-                filtrados = datosLocales.filter(t => t.es_final == 0);
-                break;
-            case 'countVencidos':
-                filtrados = datosLocales.filter(t => t.sla_status === 'VENCIDO');
-                break;
+        if (idStat === 'countTotal') {
+            filtrados = datosLocales;
+        } else if (idStat === 'countResueltos') {
+            filtrados = datosLocales.filter(t => t.es_final == 1);
+        } else if (idStat === 'countPendientes') {
+            filtrados = datosLocales.filter(t => t.es_final == 0);
+        } else if (idStat === 'countVencidos') {
+            filtrados = datosLocales.filter(t => t.sla_status === 'VENCIDO');
         }
-        renderizarTabla(filtrados);
+
+        pintarTabla(filtrados);
     });
 
-    // 5. Botón Limpiar (Reset total)
+    // 5. Boton para limpiar filtros
     $('#btnLimpiar').on('click', function() {
-    // Forzamos el vaciado de los inputs de fecha
-    $('#fecha_inicio').val('');
-    $('#fecha_fin').val('');
-
-    // Si quieres que el resto de selects también se limpien
-    $('#sel_tecnico').val('');
-    $('#sel_departamento').val('');
-    $('#sel_estado').val('');
-
-    // Limpiamos la tabla visualmente
-    $('#tablaReportesBody').html('<tr><td colspan="6" class="text-center py-5" style="color: #94a3b8 !important;">Defina los filtros y presione "Generar Vista".</td></tr>');
-    
-    // Reseteamos los contadores de los cuadros a cero
-    $('.stat-number').text('0');
-});
-
-    function renderizarTabla(data) {
-    let rows = '';
-    
-    // Función auxiliar para formatear fecha (DD/MM/YYYY HH:mm)
-    const formatearFecha = (fechaRaw) => {
-        if(!fechaRaw) return "---";
-        const d = new Date(fechaRaw);
-        return d.toLocaleDateString('es-ES', {
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
-
-    if (data.length > 0) {
-        data.forEach(item => {
-            // Lógica Pro para el SLA
-            const esVencido = item.sla_status === 'VENCIDO';
-            const slaIcon = esVencido ? 'fa-exclamation-circle' : 'fa-check-circle';
-            const slaClass = esVencido ? 'badge-sla-danger' : 'badge-sla-success';
-
-            // Lógica Pro para Estados
-            const esFinalizado = item.es_final == 1;
-            const estadoBadge = esFinalizado 
-                ? 'rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2);' 
-                : 'rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2);';
-
-            rows += `
-                <tr>
-                    <td class="text-white font-weight-bold">#${item.id_ticket}</td>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <div class="avatar-mini mr-2">${item.tecnico_nombre ? item.tecnico_nombre.charAt(0) : '?'}</div>
-                            <span>${item.tecnico_nombre || 'Sin asignar'}</span>
-                        </div>
-                    </td>
-                    <td><span class="text-muted small">${item.departamento}</span></td>
-                    <td class="font-italic" style="color: #94a3b8;">${formatearFecha(item.fecha_creacion)}</td>
-                    <td>
-                        <span class="badge py-1 px-2" style="${estadoBadge}">
-                            ${item.estado}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="${slaClass}">
-                            <i class="fas ${slaIcon} mr-1"></i> ${item.sla_status}
-                        </div>
-                    </td>
-                </tr>`;
-        });
-    } else {
-        rows = '<tr><td colspan="6" class="text-center py-5 text-muted">No se encontraron registros coincidentes.</td></tr>';
-    }
-    $('#tablaReportesBody').html(rows);
-}
+        $('#fecha_inicio, #fecha_fin, #sel_tecnico, #sel_depto, #sel_estado').val('');
+        $('#tablaReportesBody').html('<tr><td colspan="6" class="text-center py-4">Seleccione filtros para ver datos</td></tr>');
+        $('.stat-number').text('0');
+        datosLocales = [];
+    });
 });

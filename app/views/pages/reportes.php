@@ -331,7 +331,7 @@ input[type="date"].form-control-custom::-webkit-calendar-picker-indicator:hover 
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4 card-custom p-3">
-        <form id="formExportar" action="/TICKETUCAD/app/models/reportes/exportar_reporte.php" method="POST" target="_blank" class="d-flex align-items-center w-100">
+        <form id="formExportar" action="/TICKETUCAD/app/models/reportes/reporte_pdf.php" method="POST" target="_blank" class="d-flex align-items-center w-100">
             <input type="hidden" name="h_inicio" id="h_inicio">
             <input type="hidden" name="h_fin" id="h_fin">
             <div class="d-flex align-items-center">
