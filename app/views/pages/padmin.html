@@ -195,7 +195,6 @@
 </head>
 <body>
 
-<!-- ══ SIDEBAR ══ -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
         <img src="/TICKETUCAD/media/img/logo.png" alt="Logo">
@@ -248,7 +247,6 @@
     </div>
 </aside>
 
-<!-- ══ HEADER ══ -->
 <header class="main-header">
     <button class="btn-toggle" id="btnToggle"><i class="bi bi-list"></i></button>
 
@@ -271,244 +269,10 @@
     </div>
 </header>
 
-<!-- ══ CONTENIDO PRINCIPAL ══ -->
 <div class="main-wrapper">
     <div class="main-content" id="main-content">
-
-        <!-- Breadcrumb + título -->
-        <div class="page-title">
-            <div class="breadcrumb-bar">
-                <i class="bi bi-house-fill"></i> Inicio
-                <i class="bi bi-chevron-right"></i> Dashboard
-            </div>
-            <h1>Panel de Administrador</h1>
-            <p>Resumen general del sistema de tickets — <span id="fecha-hoy"></span></p>
         </div>
-
-        <!-- Tarjetas de estadísticas -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon blue"><i class="bi bi-ticket-detailed-fill"></i></div>
-                <div class="stat-info">
-                    <div class="stat-val">148</div>
-                    <div class="stat-label">Tickets totales</div>
-                    <div class="stat-trend trend-up"><i class="bi bi-arrow-up-short"></i> +12% este mes</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon yellow"><i class="bi bi-hourglass-split"></i></div>
-                <div class="stat-info">
-                    <div class="stat-val">24</div>
-                    <div class="stat-label">En progreso</div>
-                    <div class="stat-trend trend-up"><i class="bi bi-arrow-up-short"></i> +3 hoy</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
-                <div class="stat-info">
-                    <div class="stat-val">112</div>
-                    <div class="stat-label">Resueltos</div>
-                    <div class="stat-trend trend-up"><i class="bi bi-arrow-up-short"></i> 99% tasa</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon red"><i class="bi bi-exclamation-triangle-fill"></i></div>
-                <div class="stat-info">
-                    <div class="stat-val">12</div>
-                    <div class="stat-label">Urgentes abiertos</div>
-                    <div class="stat-trend trend-down"><i class="bi bi-arrow-down-short"></i> -2 vs ayer</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabla de tickets recientes -->
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="bi bi-ticket-detailed-fill me-2" style="color:#4d9fff"></i>Tickets Recientes</h3>
-                <div class="card-actions">
-                    <button class="btn-sm-ghost">Exportar</button>
-                    <button class="btn-primary-custom"><i class="bi bi-plus-lg"></i> Nuevo ticket</button>
-                </div>
-            </div>
-            <div class="card-body" style="padding:0; overflow-x:auto;">
-                <table class="tickets-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Asunto</th>
-                            <th>Estado</th>
-                            <th>Prioridad</th>
-                            <th>Agente</th>
-                            <th>Fecha</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="ticket-id">#TK-0148</span></td>
-                            <td><div class="ticket-subject">Error en impresora Lab 3<small>Infraestructura · Hardware</small></div></td>
-                            <td><span class="badge-status badge-urgent">Urgente</span></td>
-                            <td><span class="priority priority-alta"><i class="bi bi-arrow-up-circle-fill"></i> Alta</span></td>
-                            <td><div class="agent-cell"><div class="agent-av">JR</div> J. Rodríguez</div></td>
-                            <td style="font-size:12px;color:var(--text-muted)">Hoy, 09:14</td>
-                            <td><button class="btn-action"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><span class="ticket-id">#TK-0147</span></td>
-                            <td><div class="ticket-subject">Sin acceso a correo institucional<small>Cuentas · Software</small></div></td>
-                            <td><span class="badge-status badge-progress">En progreso</span></td>
-                            <td><span class="priority priority-media"><i class="bi bi-dash-circle-fill"></i> Media</span></td>
-                            <td><div class="agent-cell"><div class="agent-av" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">ML</div> M. López</div></td>
-                            <td style="font-size:12px;color:var(--text-muted)">Hoy, 08:50</td>
-                            <td><button class="btn-action"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><span class="ticket-id">#TK-0146</span></td>
-                            <td><div class="ticket-subject">Actualización de antivirus<small>Seguridad · Software</small></div></td>
-                            <td><span class="badge-status badge-open">Abierto</span></td>
-                            <td><span class="priority priority-baja"><i class="bi bi-arrow-down-circle-fill"></i> Baja</span></td>
-                            <td><div class="agent-cell"><div class="agent-av" style="background:linear-gradient(135deg,#059669,#10b981)">CP</div> C. Pérez</div></td>
-                            <td style="font-size:12px;color:var(--text-muted)">Ayer, 16:30</td>
-                            <td><button class="btn-action"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><span class="ticket-id">#TK-0145</span></td>
-                            <td><div class="ticket-subject">PC no enciende en aula 201<small>Infraestructura · Hardware</small></div></td>
-                            <td><span class="badge-status badge-closed">Resuelto</span></td>
-                            <td><span class="priority priority-alta"><i class="bi bi-arrow-up-circle-fill"></i> Alta</span></td>
-                            <td><div class="agent-cell"><div class="agent-av">JR</div> J. Rodríguez</div></td>
-                            <td style="font-size:12px;color:var(--text-muted)">Ayer, 11:05</td>
-                            <td><button class="btn-action"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><span class="ticket-id">#TK-0144</span></td>
-                            <td><div class="ticket-subject">Solicitud de nuevo usuario VPN<small>Redes · Accesos</small></div></td>
-                            <td><span class="badge-status badge-progress">En progreso</span></td>
-                            <td><span class="priority priority-media"><i class="bi bi-dash-circle-fill"></i> Media</span></td>
-                            <td><div class="agent-cell"><div class="agent-av" style="background:linear-gradient(135deg,#d97706,#f59e0b)">AS</div> A. Soto</div></td>
-                            <td style="font-size:12px;color:var(--text-muted)">02/04/2026</td>
-                            <td><button class="btn-action"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Grid inferior -->
-        <div class="bottom-grid">
-
-            <!-- Actividad reciente -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="bi bi-activity me-2" style="color:#4d9fff"></i>Actividad Reciente</h3>
-                    <button class="btn-sm-ghost">Ver todo</button>
-                </div>
-                <div class="card-body">
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-dot" style="background:#4d9fff"></div>
-                            <div>
-                                <div class="activity-text"><span>J. Rodríguez</span> abrió el ticket <span>#TK-0148</span> — Error en impresora Lab 3</div>
-                                <div class="activity-time"><i class="bi bi-clock me-1"></i>Hace 18 min</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-dot" style="background:#fbbf24"></div>
-                            <div>
-                                <div class="activity-text"><span>M. López</span> actualizó el estado de <span>#TK-0147</span> a En progreso</div>
-                                <div class="activity-time"><i class="bi bi-clock me-1"></i>Hace 42 min</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-dot" style="background:#34d399"></div>
-                            <div>
-                                <div class="activity-text"><span>J. Rodríguez</span> cerró el ticket <span>#TK-0145</span> como Resuelto</div>
-                                <div class="activity-time"><i class="bi bi-clock me-1"></i>Hace 2 h</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-dot" style="background:#a78bfa"></div>
-                            <div>
-                                <div class="activity-text">Nuevo usuario <span>C. Pérez</span> registrado como Agente IT</div>
-                                <div class="activity-time"><i class="bi bi-clock me-1"></i>Ayer, 17:00</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-dot" style="background:#f87171"></div>
-                            <div>
-                                <div class="activity-text"><span>A. Soto</span> escaló el ticket <span>#TK-0144</span> a prioridad Media</div>
-                                <div class="activity-time"><i class="bi bi-clock me-1"></i>Ayer, 14:22</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Agentes IT -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="bi bi-person-badge-fill me-2" style="color:#4d9fff"></i>Agentes IT</h3>
-                    <button class="btn-sm-ghost">Gestionar</button>
-                </div>
-                <div class="card-body">
-                    <div class="agent-list">
-                        <div class="agent-row">
-                            <div class="agent-av-lg" style="background:linear-gradient(135deg,#1e5fd4,#2563eb)">JR</div>
-                            <div class="agent-meta">
-                                <div class="agent-name">J. Rodríguez</div>
-                                <div class="agent-dept">Hardware · Redes</div>
-                            </div>
-                            <div class="agent-tickets">
-                                <div class="t-num">8</div>
-                                <div class="t-label">tickets</div>
-                            </div>
-                            <div class="online-dot" title="En línea"></div>
-                        </div>
-                        <div class="agent-row">
-                            <div class="agent-av-lg" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">ML</div>
-                            <div class="agent-meta">
-                                <div class="agent-name">M. López</div>
-                                <div class="agent-dept">Software · Cuentas</div>
-                            </div>
-                            <div class="agent-tickets">
-                                <div class="t-num">5</div>
-                                <div class="t-label">tickets</div>
-                            </div>
-                            <div class="online-dot" title="En línea"></div>
-                        </div>
-                        <div class="agent-row">
-                            <div class="agent-av-lg" style="background:linear-gradient(135deg,#059669,#10b981)">CP</div>
-                            <div class="agent-meta">
-                                <div class="agent-name">C. Pérez</div>
-                                <div class="agent-dept">Seguridad · IT</div>
-                            </div>
-                            <div class="agent-tickets">
-                                <div class="t-num">3</div>
-                                <div class="t-label">tickets</div>
-                            </div>
-                            <div class="offline-dot" title="Desconectado"></div>
-                        </div>
-                        <div class="agent-row">
-                            <div class="agent-av-lg" style="background:linear-gradient(135deg,#d97706,#f59e0b)">AS</div>
-                            <div class="agent-meta">
-                                <div class="agent-name">A. Soto</div>
-                                <div class="agent-dept">Redes · Accesos</div>
-                            </div>
-                            <div class="agent-tickets">
-                                <div class="t-num">6</div>
-                                <div class="t-label">tickets</div>
-                            </div>
-                            <div class="online-dot" title="En línea"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- /bottom-grid -->
-
-    </div><!-- /main-content -->
-</div><!-- /main-wrapper -->
-
+</div>
 
 <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/fontawesome/css/all.min.css"/>
 <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.css"/>
@@ -517,5 +281,10 @@
 <script src="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.js"></script>
 <script src="/TICKETUCAD/app/controllers/login/padmin.js"></script>
 <script src="/TICKETUCAD/app/controllers/tickets/tickets.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@5.3.6/dist/apexcharts.min.js"></script>
+
+<script src="/TICKETUCAD/app/controllers/dashboard/dashboard_controller.js"></script>
+
+<script src="/TICKETUCAD/recursos/libs/apexcharts/apexcharts.min.js"></script>
 </body>
 </html>

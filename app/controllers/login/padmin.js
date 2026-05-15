@@ -12,7 +12,7 @@ async function cargarSesionUsuario() {
         if (data.autenticado) {
             sessionStorage.setItem('ucad_nombre', data.nombre);
             sessionStorage.setItem('ucad_rol',    data.rol);
-            sessionStorage.setItem('ucad_id_rol', data.id_rol);             
+            sessionStorage.setItem('ucad_id_rol', data.id_rol);            
         }
     } catch (e) {
         // Si falla el fetch, usar lo que haya en sessionStorage
@@ -31,29 +31,26 @@ async function cargarSesionUsuario() {
 }
 
 // ── Arranque: primero sesión, luego vista inicio ──────────────────────────────
-// Se usa await para garantizar que sessionStorage ya tiene nombre y rol
-// antes de que el script de inicio.html se ejecute y los intente leer.
 cargarSesionUsuario().then(() => {
     const params = new URLSearchParams(window.location.search);
     const viewFromQuery = params.get('view');
     const viewFromStorage = sessionStorage.getItem('ucad_view');
-    const view = (viewFromQuery && viewMap[viewFromQuery]) ? viewFromQuery : viewFromStorage;
+    
+    // Aquí definimos qué vista cargará por defecto, ahora mismo carga 'inicio'
+    // Si quisieras que cargue el dashboard al entrar, cambiarías 'inicio' por 'dashboard'
+    const view = (viewFromQuery && viewMap[viewFromQuery]) ? viewFromQuery : (viewFromStorage || 'inicio');
 
     if (window.location.search.includes('view=')) {
         window.history.replaceState(null, 'Panel Administrador', '/TICKETUCAD/panel-administrador');
     }
 
-    if (view && viewMap[view]) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        const nav = document.querySelector(`.nav-item[data-view="${view}"]`);
-        if (nav) nav.classList.add('active');
-        cargarVista(view);
-        sessionStorage.removeItem('ucad_view');
-    } else {
-        cargarVista('inicio');
-    }
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    const nav = document.querySelector(`.nav-item[data-view="${view}"]`);
+    if (nav) nav.classList.add('active');
+    
+    cargarVista(view);
+    sessionStorage.removeItem('ucad_view');
 });
-
 
 // ── URL amigable ──────────────────────────────────────────────────────────────
 if (window.location.pathname !== '/TICKETUCAD/panel-administrador') {
@@ -63,7 +60,9 @@ if (window.location.pathname !== '/TICKETUCAD/panel-administrador') {
 // ── Toggle sidebar móvil ──────────────────────────────────────────────────────
 const sidebar   = document.getElementById('sidebar');
 const btnToggle = document.getElementById('btnToggle');
-btnToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+if (btnToggle) {
+    btnToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+}
 
 document.addEventListener('click', e => {
     if (window.innerWidth <= 768 && !sidebar.contains(e.target) && e.target !== btnToggle) {
@@ -72,8 +71,7 @@ document.addEventListener('click', e => {
 });
 
 // ── Carga dinámica de vistas ──────────────────────────────────────────────────
-const mainContent   = document.getElementById('main-content');
-const dashboardHTML = mainContent.innerHTML; // guarda el dashboard original
+const mainContent = document.getElementById('main-content');
 
 const viewMap = {
     inicio:       '/TICKETUCAD/app/views/pages/inicio.html',
@@ -84,12 +82,20 @@ const viewMap = {
 };
 
 function cargarVista(view) {
+    // 1. Lógica para el nuevo Dashboard
     if (view === 'dashboard') {
-        mainContent.innerHTML = dashboardHTML;
+        if (typeof inicializarDashboard === 'function') {
+            inicializarDashboard();
+        } else {
+            console.error("No se encontró la función inicializarDashboard. Verifica que el script esté vinculado.");
+        }
         return;
     }
+
+    // 2. Lógica para las demás vistas HTML/PHP
     const url = viewMap[view];
     if (!url) return;
+    
     $('#main-content').load(url, function () {
         if (view === 'tickets' && typeof extraerTickets === 'function') {
             extraerTickets();
@@ -109,10 +115,13 @@ document.querySelectorAll('.nav-item').forEach(item => {
 });
 
 // ── Pantalla completa ─────────────────────────────────────────────────────────
-document.getElementById('btnFullscreen').addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-    } else {
-        document.exitFullscreen();
-    }
-});
+const btnFullscreen = document.getElementById('btnFullscreen');
+if (btnFullscreen) {
+    btnFullscreen.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    });
+}
