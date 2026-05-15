@@ -10,7 +10,8 @@ include 'conexion.php';
             PR.nombre AS prioridad_id, 
             CA.nombre AS categoria_id, 
             TK.asignado_a AS asignado_id, 
-            US.nombre AS asignado_nombre
+            US.nombre AS asignado_nombre,
+            TK.correo AS correo
         FROM tickets TK 
         LEFT JOIN estados_ticket ET ON TK.estado_id = ET.id 
         LEFT JOIN prioridades PR ON TK.prioridad_id = PR.id 

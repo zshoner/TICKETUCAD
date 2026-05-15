@@ -9,6 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $categoria_id = $_POST['categoria_id'];
     $prioridad_id = $_POST['prioridad_id'];
     $descripcion = $_POST['descripcion'];
+    $correo = $_POST['correo'];
 
     // Valores por defecto para la BD
     $usuario_id = 1;      
@@ -44,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         // Preparar la consulta SQL (Agregamos 'asignado_a')
-        $sql = "INSERT INTO tickets (titulo, descripcion, usuario_id, estado_id, prioridad_id, categoria_id, departamento_id, asignado_a, fecha_creacion, fecha_actualizacion) 
-                VALUES (:titulo, :descripcion, :usuario_id, :estado_id, :prioridad_id, :categoria_id, :departamento_id, :asignado_a, NOW(), NOW())";
+        $sql = "INSERT INTO tickets (titulo, descripcion, usuario_id, estado_id, prioridad_id, categoria_id, departamento_id, asignado_a, fecha_creacion, fecha_actualizacion, correo) 
+                VALUES (:titulo, :descripcion, :usuario_id, :estado_id, :prioridad_id, :categoria_id, :departamento_id, :asignado_a, NOW(), NOW(), :correo)";
         
         $stmt = $pdo->prepare($sql);
 
@@ -58,7 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':prioridad_id' => $prioridad_id,
             ':categoria_id' => $categoria_id,
             ':departamento_id' => $departamento_id,
-            ':asignado_a' => $siguiente_agente  // <--- Aquí guardamos el agente que calculamos arriba
+            ':asignado_a' => $siguiente_agente,  // <--- Aquí guardamos el agente que calculamos arriba
+            ':correo' => $correo
         ]);
 
         // Mostrar mensaje de éxito

@@ -23,6 +23,7 @@
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
         input[type="text"], select, textarea { width: 100%; padding: 10px; border: 1px solid #2165bd; border-radius: 4px; box-sizing: border-box; }
+        input[type="email"], select, textarea { width: 100%; padding: 10px; border: 1px solid #2165bd; border-radius: 4px; box-sizing: border-box; }
         textarea { resize: vertical; min-height: 120px; }
         .btn-submit { background-color: #152036; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; transition: background 0.3s; }
         .btn-submit:hover { background-color: #004494; }
@@ -69,6 +70,14 @@
                     <option value="3">Alta (Me impide trabajar por completo)</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" name="correo" required 
+                       placeholder="Tu correo electrónico">
+                <span class="help-text">Te contactaremos a esta dirección</span>
+            </div>
+            
 
             <div class="form-group">
                 <label for="descripcion">Descripción detallada:</label>
