@@ -6,7 +6,8 @@ if (isset($_SESSION['nombre']) && isset($_SESSION['rol'])) {
     echo json_encode([
         'autenticado' => true,
         'nombre'      => $_SESSION['nombre'],
-        'rol'         => $_SESSION['rol']
+        'rol'         => $_SESSION['rol'],
+        'id_rol'      => $_SESSION['id_rol']
     ]);
 } else {
     echo json_encode(['autenticado' => false]);
