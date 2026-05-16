@@ -2,6 +2,7 @@
 // Cargar mPDF y la conexion
 require_once __DIR__ . '/../../../vendor/autoload.php';
 require_once __DIR__ . "/../php/conexion.php";
+require_once __DIR__ . "/auth_admin.php";
 
 // Filtros que vienen por GET
 $inicio = isset($_GET['inicio']) ? $_GET['inicio'] : '';
