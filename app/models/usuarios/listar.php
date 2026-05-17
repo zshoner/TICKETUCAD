@@ -5,7 +5,7 @@ require("../php/conexion.php");
 $params = $_POST;
 
 try {
-    $busqueda = mysqli_real_escape_string($con, trim($params['busqueda'] ?? ''));
+    $busqueda = mysqli_real_escape_string($conexion, trim($params['busqueda'] ?? ''));
 
     $sql = "SELECT u.id, u.nombre, u.correo, u.usuario,
                    r.nombre AS rol, r.id AS rol_id,
@@ -19,7 +19,7 @@ try {
     }
     $sql .= " ORDER BY u.fecha_creacion DESC";
 
-    $resultado = mysqli_query($con, $sql);
+    $resultado = mysqli_query($conexion, $sql);
 
     if($resultado){
         $items = array();

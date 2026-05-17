@@ -4,7 +4,7 @@ require("../php/conexion.php");
 
 try {
     $sql = "SELECT id, nombre FROM roles ORDER BY nombre";
-    $resultado = mysqli_query($con, $sql);
+    $resultado = mysqli_query($conexion, $sql);
 
     if($resultado){
         $items = array();
