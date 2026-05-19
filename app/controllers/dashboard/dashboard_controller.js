@@ -67,7 +67,7 @@ function inicializarDashboard() {
     // 2. Función para obtener los datos
     async function actualizarDatos(periodo) {
         try {
-            const response = await fetch(`/TICKETUCAD/app/controllers/dashboard/get_dashboard_data.php?periodo=${periodo}`);
+            const response = await fetch(`/TICKETUCAD/app/models/dashboard/get_dashboard_data.php?periodo=${periodo}`);
             const res = await response.json();
 
             if (res.status === 'success') {

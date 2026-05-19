@@ -14,23 +14,61 @@
     <div class="card-header">
         <h3><i class="bi bi-inbox-fill me-2" style="color:#4d9fff"></i>Bandeja de Entrada</h3>
     </div>
-    <div class="card-body" style="padding:0; overflow-x:auto;">
-        <table class="tickets-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Título</th>
-                    <th>Estado</th>
-                    <th>Prioridad</th>
-                    <th>Categoría</th>
-                    <th>correo</th>
-                    <th>Asignado a</th>
-                </tr>
-            </thead>
-            <tbody id="tabla_tickets">
-                </tbody>
-        </table>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; flex-wrap: wrap; gap: 10px; background: #1b2a47; border-bottom: 1px solid var(--border);">
+    
+    <div>
+        <select id="filtro-estado" class="form-control" onchange="aplicarFiltro()" style="width: 250px; background: #16203a; color: white; border: 2px solid var(--border);">
+            <option value="all" selected>Mostrar Todo</option>
+            <option value="Abierto">Abiertos</option>
+            <option value="En proceso">En proceso / En espera</option>
+            <option value="Resuelto">Resueltos</option>
+        </select>
     </div>
+
+    <div style="display: flex; align-items: center; gap: 15px; color: white;">
+        <span style="font-weight: bold; margin-right: 5px;">Vista:</span>
+        
+        <label style="margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+            <input type="radio" name="modo_vista" value="todo" onchange="cambiarModoVista()" checked style="cursor: pointer;">
+            Lista completa
+        </label>
+
+        <label style="margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+            <input type="radio" name="modo_vista" value="paginado" onchange="cambiarModoVista()" style="cursor: pointer;">
+            Paginado
+        </label>
+
+        <select id="size-pagina" class="form-control" onchange="cambiarSizePagina()" style="display: none; width: 70px; background: #16203a; color: white; border: 2px solid var(--border); padding: 5px;">
+            <option value="10" selected>10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+    </div>
+
+</div>
+
+<div style="padding:0; overflow-x:auto;">
+    <table class="tickets-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Título</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Categoría</th>
+                <th>Correo</th>
+                <th>Asignado a</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_tickets">
+            </tbody>
+    </table>
+</div>
+
+<div id="controles-paginacion" style="display: none; padding: 15px; justify-content: center; gap: 15px; align-items: center;">
+    <button onclick="cambiarPagina(-1)" class="btn btn-sm btn-secondary" style="background: #4d9fff; border: none; color: white; padding: 5px 15px; cursor: pointer;">Anterior</button>
+    <span id="info-pagina" style="color: white; font-weight: bold;">Página 1</span>
+    <button onclick="cambiarPagina(1)" class="btn btn-sm btn-secondary" style="background: #4d9fff; border: none; color: white; padding: 5px 15px; cursor: pointer;">Siguiente</button>
 </div>
 
 

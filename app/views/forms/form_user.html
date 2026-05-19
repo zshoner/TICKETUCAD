@@ -58,6 +58,7 @@
                     <option value="3">Problema de hardware</option>
                     <option value="4">Problema de software</option>
                     <option value="5">Usuario que no puede trabajar</option>
+                    
                 </select>
             </div>
 
@@ -91,6 +92,24 @@
 
         </form>
     </div>
+    <script> // Este script se encarga de deshabilitar el botón de envío después de hacer clic para evitar envíos múltiples
+        
+        const formulario = document.querySelector('form');
+
+
+        formulario.addEventListener('submit', function() {
+
+            const botonSubmit = document.querySelector('.btn-submit');
+            
+            botonSubmit.disabled = true;
+            
+            botonSubmit.textContent = 'Enviando ticket...';
+            
+
+            botonSubmit.style.backgroundColor = '#666'; 
+            botonSubmit.style.cursor = 'not-allowed';
+        });
+    </script>
 
 </body>
 </html>

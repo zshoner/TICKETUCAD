@@ -16,7 +16,8 @@ include 'conexion.php';
         LEFT JOIN estados_ticket ET ON TK.estado_id = ET.id 
         LEFT JOIN prioridades PR ON TK.prioridad_id = PR.id 
         LEFT JOIN categorias CA ON TK.categoria_id = CA.id
-        LEFT JOIN usuarios US ON TK.asignado_a = US.id";
+        LEFT JOIN usuarios US ON TK.asignado_a = US.id
+        ORDER BY TK.id DESC";
     
     $resultado = $pdo->query($sql);
 
