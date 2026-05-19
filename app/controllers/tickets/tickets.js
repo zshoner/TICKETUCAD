@@ -78,7 +78,7 @@ function renderizarTickets() {
     tablaTickets.innerHTML = filasAcumuladas;
 }
 
-// 5. Cambiar modo de vista (Radio Buttons)
+// (Radio Buttons)
 function cambiarModoVista() {
     const selectorSize = document.getElementById('size-pagina'); // CAMBIO AQUÍ
     const botonesPaginacion = document.getElementById('controles-paginacion');
@@ -100,7 +100,7 @@ function cambiarModoVista() {
     actualizarVistaSilenciosa();
 }
 
-// 6. Cambiar SIZE de página (CAMBIO DE NOMBRE AQUÍ)
+
 function cambiarSizePagina() {
     const selector = document.getElementById('size-pagina'); // CAMBIO AQUÍ
     if(selector) {
