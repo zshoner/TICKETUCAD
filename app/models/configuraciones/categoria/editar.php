@@ -14,7 +14,7 @@ if (!$id || empty($nombre)) {
 // Actualiza la categoría en la base de datos
 $sql = "UPDATE categorias SET nombre='$nombre' WHERE id=$id";
 
-if (mysqli_query($con, $sql)) {
+if (mysqli_query($conexion, $sql)) {
     echo json_encode(['success' => true, 'msg' => 'Categoría actualizada correctamente']);
 } else {
     echo json_encode(['success' => false, 'error' => 'Error al actualizar la categoría']);

@@ -2,12 +2,6 @@ $(function () {
     cargar_roles();
     listar_usuarios();
 
-    let timer;
-    $("#inp_buscar").on("keyup", function () {
-        clearTimeout(timer);
-        timer = setTimeout(listar_usuarios, 400);
-    });
-
     $("#btn_agregar").click(function () {
         $("#modal_crear").modal("show");
     });
@@ -22,7 +16,7 @@ $(function () {
         guardar_edicion();
     });
 
-    $("#tb_usuarios").on("click", ".edit-user", function () {
+    $(document).on("click", ".edit-user", function () {
         let id      = $(this).data("id");
         let nombre  = $(this).data("nombre");
         let correo  = $(this).data("correo");
@@ -31,13 +25,13 @@ $(function () {
         abrir_editar(id, nombre, correo, usuario, rol_id);
     });
 
-    $("#tb_usuarios").on("click", ".toggle-user", function () {
+    $(document).on("click", ".toggle-user", function () {
         let id     = $(this).data("id");
         let estado = $(this).data("estado");
         cambiar_estado(id, estado);
     });
 
-    $("#tb_usuarios").on("click", ".del-user", function () {
+    $(document).on("click", ".del-user", function () {
         let id     = $(this).data("id");
         let nombre = $(this).data("nombre");
         eliminar_usuario(id, nombre);
@@ -74,77 +68,74 @@ function cargar_roles(){
     });
 }
 
-function listar_usuarios(){
-    $.ajax({
-        url: "/TICKETUCAD/app/models/usuarios/listar.php",
-        method: "POST",
-        data: {
-            busqueda: $("#inp_buscar").val()
+function listar_usuarios() {
+    if ($.fn.DataTable.isDataTable("#tabla_usuarios")) {
+        $("#tabla_usuarios").DataTable().clear();
+        $("#tabla_usuarios").DataTable().destroy();
+    }
+    $("#tabla_usuarios").DataTable({
+        destroy: true,
+        info: true,
+        filter: true,
+        lengthChange: false,
+        pageLength: 10,
+        responsive: true,
+        processing: true,
+        serverSide: true,
+        language: {
+            search: "Buscar:",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ usuarios",
+            infoEmpty: "Sin usuarios",
+            paginate: { previous: "Anterior", next: "Siguiente" },
+            processing: "Cargando...",
+            zeroRecords: "No se encontraron usuarios"
         },
-        dataType: "json",
-    }).done(function (response) {
-        if(response.success){
-            let filas = "";
-            for(let i = 0; i < response.total; i++){
-                let u         = response.data[i];
-                let iniciales = obtener_iniciales(u.nombre);
-                let badge_rol = obtener_badge_rol(u.rol);
-                let badge_est = u.estado === "activo"
-                    ? '<span class="badge badge-success">Activo</span>'
-                    : '<span class="badge badge-danger">Inactivo</span>';
-                let fecha = u.fecha_creacion ? u.fecha_creacion.substring(0, 10) : "-";
-
-                let botones =
-                "<button class='btn btn-sm btn-outline-primary edit-user mr-1' title='Editar' "+
-                    "data-id='"+ u.id +"' data-nombre='"+ u.nombre +"' data-correo='"+ u.correo +"' "+
-                    "data-usuario='"+ u.usuario +"' data-rol_id='"+ u.rol_id +"'>"+
-                    "<i class='fas fa-edit'></i>"+
-                "</button>"+
-                "<button class='btn btn-sm btn-outline-warning toggle-user mr-1' title='Cambiar estado' "+
-                    "data-id='"+ u.id +"' data-estado='"+ u.estado +"'>"+
-                    "<i class='fas fa-exchange-alt'></i>"+
-                "</button>"+
-                "<button class='btn btn-sm btn-outline-danger del-user' title='Eliminar' "+
-                    "data-id='"+ u.id +"' data-nombre='"+ u.nombre +"'>"+
-                    "<i class='fas fa-trash'></i>"+
-                "</button>";
-
-                filas +=
-                "<tr>"+
-                    "<td class='text-muted'>#"+ u.id +"</td>"+
-                    "<td>"+
-                        "<div class='d-flex align-items-center'>"+
-                            "<span class='badge badge-primary mr-2 p-2'>"+ iniciales +"</span>"+
-                            "<strong>"+ u.nombre +"</strong>"+
-                        "</div>"+
-                    "</td>"+
-                    "<td class='text-muted'>"+ u.correo +"</td>"+
-                    "<td class='text-center'>"+ badge_rol +"</td>"+
-                    "<td class='text-center'>"+ badge_est +"</td>"+
-                    "<td class='text-muted'>"+ fecha +"</td>"+
-                    "<td class='text-right'>"+ botones +"</td>"+
-                "</tr>";
-            }
-
-            if(filas === ""){
-                filas = "<tr><td colspan='7' class='text-center text-muted py-3'>No se encontraron usuarios.</td></tr>";
-            }
-
-            $("#tb_usuarios").html(filas);
-            $("#lbl_total").text("Mostrando "+ response.total +" usuario(s)");
-        }else{
-            Swal.fire({
-                title: "¡Atención!",
-                text: response.error,
-                icon: "info"
-            });
-        }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        Swal.fire({
-            title: "¡Atención!",
-            text: `Ocurrió un error al conectar con el servidor: ${textStatus}`,
-            icon: "info"
-        });
+        ajax: {
+            url: "/TICKETUCAD/app/models/usuarios/mostrar.php",
+            method: "POST",
+            dataType: "json",
+        },
+        columns: [
+            { data: "id", orderable: true,
+              render: function (value) { return "<span class='text-muted'>#" + value + "</span>"; }
+            },
+            { data: "nombre", orderable: true,
+              render: function (value, type, row) {
+                let iniciales = obtener_iniciales(value);
+                return "<div class='d-flex align-items-center'><span class='badge badge-primary mr-2 p-2'>" + iniciales + "</span><strong>" + value + "</strong></div>";
+              }
+            },
+            { data: "correo", orderable: true,
+              render: function (value) { return "<span class='text-muted'>" + value + "</span>"; }
+            },
+            { data: "rol", orderable: true,
+              render: function (value, type, row) { return obtener_badge_rol(value); }
+            },
+            { data: "estado", orderable: true,
+              render: function (value) {
+                return value === "activo"
+                    ? "<span class='badge badge-success'>Activo</span>"
+                    : "<span class='badge badge-danger'>Inactivo</span>";
+              }
+            },
+            { data: "fecha_creacion", orderable: true,
+              render: function (value) { return value ? value.substring(0, 10) : "-"; }
+            },
+            { data: "id", orderable: false,
+              render: function (value, type, row) {
+                return "<button class='btn btn-sm btn-outline-primary edit-user mr-1' title='Editar' " +
+                    "data-id='" + row.id + "' data-nombre='" + row.nombre + "' data-correo='" + row.correo + "' " +
+                    "data-usuario='" + row.usuario + "' data-rol_id='" + row.rol_id + "'>" +
+                    "<i class='fas fa-edit'></i></button>" +
+                "<button class='btn btn-sm btn-outline-warning toggle-user mr-1' title='Cambiar estado' " +
+                    "data-id='" + row.id + "' data-estado='" + row.estado + "'>" +
+                    "<i class='fas fa-exchange-alt'></i></button>" +
+                "<button class='btn btn-sm btn-outline-danger del-user' title='Eliminar' " +
+                    "data-id='" + row.id + "' data-nombre='" + row.nombre + "'>" +
+                    "<i class='fas fa-trash'></i></button>";
+              }
+            },
+        ]
     });
 }
 
@@ -165,7 +156,7 @@ function crear_usuario(){
             $("#form_crear")[0].reset();
             Swal.fire({
                 title: "¡Usuario creado!",
-                html: response.msg + "<br><br><b>Contraseña temporal:</b> <span style='font-size:1.3rem; color:#4d9fff;'>" + response.password_temporal + "</span><br><small>El usuario deberá cambiarla al iniciar sesión.</small>",
+                html: response.msg + "<br><br><b>Contraseña temporal:</b> <span style='font-size:1.3rem; color:#4d9fff;'>" + response.password_temporal + "</span><br><small>Esta contraseña deberá cambiarse en el primer inicio de sesion</small>",
                 icon: "success"
             });
             listar_usuarios();
@@ -312,7 +303,7 @@ function eliminar_usuario(id, nombre){
                     title: "¡Atención!",
                     text: `Ocurrió un error al conectar con el servidor: ${textStatus}`,
                     icon: "info"
-                });
+                });  
             });
         }
     });

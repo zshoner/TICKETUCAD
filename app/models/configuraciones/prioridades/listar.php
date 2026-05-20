@@ -4,16 +4,19 @@ if (!$conexion) {
     echo json_encode(['success' => false, 'error' => 'Sin conexión a la base de datos']);
     exit;
 }
-// Consulta todas las categorías ordenadas por nombre
-$res  = mysqli_query($conexion, "SELECT id, nombre FROM categorias ORDER BY nombre");
+
+// Es vital ordenar por el nivel (ej: 1 = Urgente, 2 = Alta, etc.)
+$res  = mysqli_query($conexion, "SELECT id, nombre, nivel FROM prioridades ORDER BY nivel ASC");
 $data = [];
+
 if (!$res) {
     echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
     exit;
 }
 
-// Recorre los resultados y los guarda en el array
-while ($row = mysqli_fetch_assoc($res)) $data[] = $row;
+while ($row = mysqli_fetch_assoc($res)) {
+    $data[] = $row;
 
-// Devuelve los datos en JSON al JS
+}
+
 echo json_encode(['success' => true, 'data' => $data]);
