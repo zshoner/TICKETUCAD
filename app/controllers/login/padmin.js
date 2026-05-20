@@ -79,6 +79,7 @@ const viewMap = {
     reportes:     '/TICKETUCAD/app/views/pages/reportes.php',
     configuracion:'/TICKETUCAD/app/views/pages/configuraciones.html',
     tickets:      '/TICKETUCAD/app/views/pages/tickets.html',
+    form_user:    '/TICKETUCAD/app/views/forms/form_user.html',
 };
 
 function cargarVista(view) {
