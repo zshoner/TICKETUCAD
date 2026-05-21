@@ -1,5 +1,7 @@
 <?php
 header('Content-Type: application/json');
+require_once __DIR__ . '/../permiso_rol/verificacion_rol.php';
+requerirAdmin();
 require("../php/conexion.php");
 
 $params = $_POST;

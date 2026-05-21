@@ -1,14 +1,8 @@
 <?php
-// Validar si la sesion no ha sido iniciada todavia
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Obtener el rol del usuario logueado en mayusculas
-$rolActual = isset($_SESSION['rol']) ? strtoupper(trim($_SESSION['rol'])) : '';
+require_once __DIR__ . '/../permiso_rol/verificacion_rol.php';
 
 // Validar si el usuario no ha iniciado sesion o si no es administrador
-if (!isset($_SESSION['usuario_id']) || ($rolActual !== 'ADMINISTRADOR' && $rolActual !== 'ADMIN')) {
+if (!usuarioAutenticado() || !esAdmin($_SESSION['rol'])) {
     
     // Obtener la ruta del archivo actual que se esta ejecutando
     $scriptActual = $_SERVER['SCRIPT_NAME'] ?? '';
