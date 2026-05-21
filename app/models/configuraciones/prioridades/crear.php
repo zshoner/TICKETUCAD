@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../permiso_rol/verificacion_rol.php';
+requerirAdmin();
 require_once '../../php/conexion.php';
 
 $nombre = trim($_POST['nombre'] ?? '');

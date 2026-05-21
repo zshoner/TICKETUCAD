@@ -220,14 +220,14 @@
             <i class="bi bi-grid-1x2-fill"></i> Dashboard
         </a>
 
-        <div class="nav-section">Gestión</div>
-        <a href="#" class="nav-item" data-view="usuarios">
+        <div class="nav-section nav-section-gestion">Gestión</div>
+        <a href="#" class="nav-item nav-item-gestion" data-view="usuarios">
             <i class="bi bi-people-fill"></i>Administracion Usuarios
         </a>
-        <a href="#" class="nav-item" data-view="reportes">
+        <a href="#" class="nav-item nav-item-gestion" data-view="reportes">
             <i class="bi bi-person-badge-fill"></i>Reportes
         </a>
-        <a href="#" class="nav-item" data-view="configuracion">
+        <a href="#" class="nav-item nav-item-gestion" data-view="configuracion">
             <i class="bi bi-gear-fill"></i> Configuración
         </a>
     </nav>
@@ -239,7 +239,7 @@
                 <div class="user-name">Administrador</div>
                 <div class="user-role">Super Admin</div>
             </div>
-            <button class="btn-logout" title="Cerrar sesión" onclick="sessionStorage.removeItem('ucad_nombre'); sessionStorage.removeItem('ucad_rol'); window.location.href='/TICKETUCAD/inicio-sesion'">
+            <button class="btn-logout" title="Cerrar sesión" onclick="sessionStorage.removeItem('ucad_nombre'); sessionStorage.removeItem('ucad_rol'); sessionStorage.removeItem('ucad_id_rol'); sessionStorage.removeItem('ucad_view'); window.location.href='/TICKETUCAD/inicio-sesion'">
                 <i class="bi bi-box-arrow-right"></i>
             </button>
         </div>
@@ -283,6 +283,7 @@
 <script src="/TICKETUCAD/recursos/datatables/js/jquery.dataTables.min.js"></script>
 <script src="/TICKETUCAD/recursos/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/TICKETUCAD/recursos/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/TICKETUCAD/app/controllers/menu_rol/menu_rol.js"></script>
 <script src="/TICKETUCAD/app/controllers/login/padmin.js"></script>
 <script src="/TICKETUCAD/app/controllers/tickets/tickets.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@5.3.6/dist/apexcharts.min.js"></script>

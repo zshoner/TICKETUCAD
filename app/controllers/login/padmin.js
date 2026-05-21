@@ -12,14 +12,25 @@ async function cargarSesionUsuario() {
         if (data.autenticado) {
             sessionStorage.setItem('ucad_nombre', data.nombre);
             sessionStorage.setItem('ucad_rol',    data.rol);
-            sessionStorage.setItem('ucad_id_rol', data.id_rol);            
+            if (data.id_rol != null) {
+                sessionStorage.setItem('ucad_id_rol', String(data.id_rol));
+            }
+            return true;
         }
     } catch (e) {
         // Si falla el fetch, usar lo que haya en sessionStorage
     }
 
-    const nombre = sessionStorage.getItem('ucad_nombre') || 'Administrador';
-    const rol    = sessionStorage.getItem('ucad_rol')    || 'Super Admin';
+    return !!sessionStorage.getItem('ucad_nombre') && !!sessionStorage.getItem('ucad_rol');
+}
+
+function obtenerRolActual() {
+    return sessionStorage.getItem('ucad_rol') || '';
+}
+
+function pintarUsuarioSidebar() {
+    const nombre = sessionStorage.getItem('ucad_nombre') || 'Usuario';
+    const rol    = sessionStorage.getItem('ucad_rol')    || 'Sin rol';
 
     const elUserName   = document.querySelector('.user-name');
     const elUserRole   = document.querySelector('.user-role');
@@ -30,15 +41,41 @@ async function cargarSesionUsuario() {
     if (elUserAvatar) elUserAvatar.textContent = nombre.charAt(0).toUpperCase();
 }
 
-// ── Arranque: primero sesión, luego vista inicio ──────────────────────────────
-cargarSesionUsuario().then(() => {
+function alertaAccesoDenegado() {
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Acceso restringido',
+            text: 'No tienes permiso para abrir esta sección.',
+            background: '#0d1528',
+            color: '#e2e8f0',
+            confirmButtonColor: '#2563eb',
+        });
+    }
+}
+
+// ── Arranque: sesión → menú por rol → vista inicial ───────────────────────────
+cargarSesionUsuario().then((autenticado) => {
+    if (!autenticado) {
+        window.location.href = '/TICKETUCAD/inicio-sesion';
+        return;
+    }
+
+    pintarUsuarioSidebar();
+
+    const rol = obtenerRolActual();
+    if (typeof aplicarMenuPorRol === 'function') {
+        aplicarMenuPorRol(rol);
+    }
+
     const params = new URLSearchParams(window.location.search);
     const viewFromQuery = params.get('view');
     const viewFromStorage = sessionStorage.getItem('ucad_view');
-    
-    // Aquí definimos qué vista cargará por defecto, ahora mismo carga 'inicio'
-    // Si quisieras que cargue el dashboard al entrar, cambiarías 'inicio' por 'dashboard'
-    const view = (viewFromQuery && viewMap[viewFromQuery]) ? viewFromQuery : (viewFromStorage || 'inicio');
+    let view = (viewFromQuery && viewMap[viewFromQuery]) ? viewFromQuery : (viewFromStorage || 'inicio');
+
+    if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view)) {
+        view = typeof vistaPorDefectoSegura === 'function' ? vistaPorDefectoSegura(rol) : 'inicio';
+    }
 
     if (window.location.search.includes('view=')) {
         window.history.replaceState(null, 'Panel Administrador', '/TICKETUCAD/panel-administrador');
@@ -46,8 +83,10 @@ cargarSesionUsuario().then(() => {
 
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     const nav = document.querySelector(`.nav-item[data-view="${view}"]`);
-    if (nav) nav.classList.add('active');
-    
+    if (nav && nav.style.display !== 'none') {
+        nav.classList.add('active');
+    }
+
     cargarVista(view);
     sessionStorage.removeItem('ucad_view');
 });
@@ -83,20 +122,25 @@ const viewMap = {
 };
 
 function cargarVista(view) {
-    // 1. Lógica para el nuevo Dashboard
+    const rol = obtenerRolActual();
+
+    if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view)) {
+        alertaAccesoDenegado();
+        view = typeof vistaPorDefectoSegura === 'function' ? vistaPorDefectoSegura(rol) : 'inicio';
+    }
+
     if (view === 'dashboard') {
         if (typeof inicializarDashboard === 'function') {
             inicializarDashboard();
         } else {
-            console.error("No se encontró la función inicializarDashboard. Verifica que el script esté vinculado.");
+            console.error('No se encontró la función inicializarDashboard.');
         }
         return;
     }
 
-    // 2. Lógica para las demás vistas HTML/PHP
     const url = viewMap[view];
     if (!url) return;
-    
+
     $('#main-content').load(url, function () {
         if (view === 'tickets' && typeof extraerTickets === 'function') {
             extraerTickets();
@@ -108,9 +152,16 @@ function cargarVista(view) {
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function(e) {
         e.preventDefault();
+        const view = this.dataset.view;
+        const rol = obtenerRolActual();
+
+        if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view)) {
+            alertaAccesoDenegado();
+            return;
+        }
+
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         this.classList.add('active');
-        const view = this.dataset.view;
         if (view) cargarVista(view);
     });
 });

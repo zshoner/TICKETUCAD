@@ -21,7 +21,16 @@ if (empty($usuario) || empty($contrasena)) {
 try {
  
     $stmt = $pdo->prepare("
-        SELECT u.id, u.nombre, u.usuario, u.contrasena_hash, u.estado, u.eliminado_en,u.cambiar_password,r.nombre AS rol
+        SELECT
+            u.id,
+            u.nombre,
+            u.usuario,
+            u.contrasena_hash,
+            u.estado,
+            u.eliminado_en,
+            u.cambiar_password,
+            u.rol_id,
+            r.nombre AS rol
         FROM usuarios u
         INNER JOIN roles r ON r.id = u.rol_id
         WHERE u.usuario = :usuario
@@ -32,28 +41,34 @@ try {
     $stmt->execute([':usuario' => $usuario]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // 2. Actualizamos la variable aquí también
-
-    $contrasenaCorrecta = ($contrasena === $user['contrasena_hash']) || password_verify($contrasena, $user['contrasena_hash']);
-
-    if (!$user || !$contrasenaCorrecta) {
+    if (!$user) {
         echo json_encode(['success' => false, 'message' => 'Usuario o contraseña incorrectos.']);
         exit;
     }
 
+    $hash = trim((string) ($user['contrasena_hash'] ?? ''));
+    $esBcrypt = (strpos($hash, '$2y$') === 0 || strpos($hash, '$2a$') === 0 || strpos($hash, '$2b$') === 0);
+    $contrasenaCorrecta =
+        ($contrasena === $hash) ||
+        ($esBcrypt && $hash !== '' && password_verify($contrasena, $hash));
 
-    // Guardar sesión
+    if (!$contrasenaCorrecta) {
+        echo json_encode(['success' => false, 'message' => 'Usuario o contraseña incorrectos.']);
+        exit;
+    }
+
     $_SESSION['usuario_id'] = $user['id'];
     $_SESSION['nombre']     = $user['nombre'];
     $_SESSION['usuario']    = $user['usuario'];
     $_SESSION['rol']        = $user['rol'];
+    $_SESSION['rol_id']     = $user['rol_id'];
 
     echo json_encode([
         'success' => true,
         'nombre'  => $user['nombre'],
         'rol'     => $user['rol'],
-        'cambiar_password' => $user['cambiar_password']
-        
+        'rol_id'  => $user['rol_id'],
+        'cambiar_password' => $user['cambiar_password'],
     ]);
 
 } catch (PDOException $e) {

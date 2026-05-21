@@ -32,6 +32,9 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             // Persistir datos del usuario para usarlos en el panel
             sessionStorage.setItem('ucad_nombre', data.nombre);
             sessionStorage.setItem('ucad_rol',    data.rol);
+            if (data.rol_id != null) {
+                sessionStorage.setItem('ucad_id_rol', String(data.rol_id));
+            }
 
             Swal.fire({
                 icon: 'success',
