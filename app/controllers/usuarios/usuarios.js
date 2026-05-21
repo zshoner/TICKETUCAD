@@ -72,16 +72,17 @@ function listar_usuarios() {
     if ($.fn.DataTable.isDataTable("#tabla_usuarios")) {
         $("#tabla_usuarios").DataTable().clear();
         $("#tabla_usuarios").DataTable().destroy();
-    }
+    } 
     $("#tabla_usuarios").DataTable({
         destroy: true,
         info: true,
         filter: true,
         lengthChange: false,
-        pageLength: 10,
+        pageLength: 5,
         responsive: true,
         processing: true,
         serverSide: true,
+        searchDelay: 500,
         language: {
             search: "Buscar:",
             info: "Mostrando _START_ a _END_ de _TOTAL_ usuarios",
@@ -97,7 +98,7 @@ function listar_usuarios() {
         },
         columns: [
             { data: "id", orderable: true,
-              render: function (value) { return "<span class='text-muted'>#" + value + "</span>"; }
+              render: function (value) { return "<span style='color:#cbd5e1;'>#" + value + "</span>"; }
             },
             { data: "nombre", orderable: true,
               render: function (value, type, row) {
@@ -106,7 +107,7 @@ function listar_usuarios() {
               }
             },
             { data: "correo", orderable: true,
-              render: function (value) { return "<span class='text-muted'>" + value + "</span>"; }
+              render: function (value) { return "<span style='color:#cbd5e1;'>" + value + "</span>"; }
             },
             { data: "rol", orderable: true,
               render: function (value, type, row) { return obtener_badge_rol(value); }

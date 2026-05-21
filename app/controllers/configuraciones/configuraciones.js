@@ -1,10 +1,6 @@
-const POR_PAGINA = 5;
-let _categorias  = [];
-let _estados     = [];
-let _prioridades = [];
+$.fn.dataTable.ext.errMode = 'none'; // Suprime el popup nativo de error de DataTables
 $(document).ready(function () {
-    listar_categorias();
-    
+    listar_categorias(); // Inicia la cadena: categorías → estados → prioridades (una a la vez para no saturar Clever Cloud)
 
     $("#form_crear_cat").on("submit", function (e) { e.preventDefault(); crear_categoria(); });
     $("#form_editar_cat").on("submit", function (e) { e.preventDefault(); guardar_edicion_categoria(); });
@@ -15,26 +11,18 @@ $(document).ready(function () {
     $("#form_crear_pri").on("submit", function (e) { e.preventDefault(); crear_prioridad(); });
     $("#form_editar_pri").on("submit", function (e) { e.preventDefault(); guardar_edicion_prioridad(); });
 
-    $("#tb_categorias").on("click", ".edit-cat", function () {
-        let id     = $(this).data("id");
-        let nombre = $(this).data("nombre");
-        abrir_editar_categoria(id, nombre);
+    $(document).on("click", ".edit-cat", function () {
+        abrir_editar_categoria($(this).data("id"), $(this).data("nombre"));
+    });
+    $(document).on("click", ".edit-est", function () {
+        abrir_editar_estado($(this).data("id"), $(this).data("nombre"), $(this).data("esfinal"));
+    });
+    $(document).on("click", ".edit-pri", function () {
+        abrir_editar_prioridad($(this).data("id"), $(this).data("nombre"), $(this).data("nivel"));
     });
 });
-function listar_categorias() {
-    $.ajax({
-        url: "/TICKETUCAD/app/models/configuraciones/categoria/listar.php",
-        method: "POST",
-        dataType: "json",
-        }).done(function (r) {
-        if (!r.success) { Swal.fire({ title: "¡Atención!", text: r.error, icon: "info" }); return; }
-        _categorias = r.data;
-        renderCategorias(1);
-        listar_estados();
-    }).fail(function (jqXHR, textStatus) {
-        Swal.fire({ title: "¡Atención!", text: `Error: ${textStatus}`, icon: "info" });
-    });
-}
+
+
 
 function crear_categoria() {
     $.ajax({
@@ -53,7 +41,7 @@ function crear_categoria() {
                 text: response.msg,
                 icon: "success"
             });
-            listar_categorias();
+           $("#tabla_categorias").DataTable().ajax.reload();
         } else {
             Swal.fire({
                 title: "¡Atención!",
@@ -94,7 +82,7 @@ function guardar_edicion_categoria() {
                 text: response.msg,
                 icon: "success"
             });
-            listar_categorias();
+            $("#tabla_categorias").DataTable().ajax.reload(); 
         } else {
             Swal.fire({
                 title: "¡Atención!",
@@ -111,60 +99,89 @@ function guardar_edicion_categoria() {
     });
 
 }
-function renderCategorias(pag) {
-    let slice = _categorias.slice((pag - 1) * POR_PAGINA, pag * POR_PAGINA);
-    let filas = "";
-    slice.forEach(function (c) {
-        filas += "<tr><td><strong>" + c.nombre + "</strong></td>" +
-                 "<td><button class='btn btn-sm btn-info edit-cat mr-1' data-id='" + c.id + "' data-nombre='" + c.nombre + "'><i class='fas fa-edit'></i></button></td></tr>";
-    });
-    $("#tb_categorias").html(filas);
-    renderPaginacion("#pag_categorias", _categorias.length, pag, renderCategorias);
-}
-
-function renderPaginacion(contenedor, total, pagActual, callback) {
-    let totalPags = Math.ceil(total / POR_PAGINA);
-    if (totalPags <= 1) { $(contenedor).html(""); return; }
-    let html = '<ul class="pagination pagination-sm justify-content-center mt-2">';
-    for (let i = 1; i <= totalPags; i++) {
-        html += '<li class="page-item ' + (i === pagActual ? 'active' : '') + '">' +
-                    '<a class="page-link" href="#">' + i + '</a>' +
-                '</li>';
+function listar_categorias() {
+    if ($.fn.DataTable.isDataTable("#tabla_categorias")) {
+        $("#tabla_categorias").DataTable().clear();
+        $("#tabla_categorias").DataTable().destroy();
     }
-    html += '</ul>';
-    $(contenedor).html(html);
-    $(contenedor).find(".page-link").on("click", function (e) {
-        e.preventDefault();
-        callback(parseInt($(this).text()));
+    $("#tabla_categorias").DataTable({
+        destroy: true,
+        info: true,
+        filter: true,
+        lengthChange: false,
+        pageLength: 5,
+        responsive: true,
+        language: {
+            search: "Buscar:",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ categorías",
+            infoEmpty: "Sin categorías",
+            paginate: { previous: "Anterior", next: "Siguiente" },
+            zeroRecords: "No se encontraron categorías"
+        },
+        ajax: {
+            url: "/TICKETUCAD/app/models/configuraciones/categoria/listar.php",
+            method: "POST",
+            dataSrc: "data",
+            error: function () {
+                Swal.fire({ title: "¡Error!", text: "No se pudo conectar con el servidor.", icon: "error" });
+            }
+        },
+        columns: [
+            { data: "nombre",
+              render: function (v) { return "<strong>" + v + "</strong>"; }
+            },
+            { data: "id", orderable: false, className: "text-right",
+              render: function (v, t, row) {
+                return "<button class='btn btn-sm btn-outline-primary edit-cat' " +
+                       "data-id='" + row.id + "' data-nombre='" + row.nombre + "'>" +
+                       "<i class='fas fa-edit'></i></button>";
+              }
+            }
+        ]
+    ,   initComplete: function () { listar_estados(); } // Al terminar categorías, carga estados
     });
 }
 function listar_estados() {
-    $.ajax({
-        url: "/TICKETUCAD/app/models/configuraciones/estados/listar.php",
-        method: "POST",
-        dataType: "json",
-    }).done(function (response) {
-        if (response.success) {
-            let filas = "";
-            response.data.forEach(function (e) {
-                filas +=
-                "<tr>" +
-                    "<td><strong>" + e.nombre + "</strong></td>" +
-                    "<td class='text-right'>" +
-                        "<button class='btn btn-sm btn-outline-primary' " +
-                            "onclick='abrir_editar_estado(" + e.id + ", \"" + e.nombre + "\", " + e.es_final + ")'>" +
-                            "<i class='fas fa-edit'></i>" +
-                        "</button>" +
-                    "</td>" +
-                "</tr>";
-            });
-            $("#tb_estados").html(filas);
-            listar_prioridades();
-        } else {
-            Swal.fire({ title: "¡Atención!", text: response.error, icon: "info" });
-        }
-    }).fail(function (jqXHR, textStatus) {
-        Swal.fire({ title: "¡Atención!", text: `Error: ${textStatus}`, icon: "info" });
+    if ($.fn.DataTable.isDataTable("#tabla_estados")) {
+        $("#tabla_estados").DataTable().clear();
+        $("#tabla_estados").DataTable().destroy();
+    }
+    $("#tabla_estados").DataTable({
+        destroy: true,
+        info: true,
+        filter: true,
+        lengthChange: false,
+        pageLength: 5,
+        responsive: true,
+        language: {
+            search: "Buscar:",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ estados",
+            infoEmpty: "Sin estados",
+            paginate: { previous: "Anterior", next: "Siguiente" },
+            zeroRecords: "No se encontraron estados"
+        },
+        ajax: {
+            url: "/TICKETUCAD/app/models/configuraciones/estados/listar.php",
+            method: "POST",
+            dataSrc: "data",
+            error: function () {
+                Swal.fire({ title: "¡Error!", text: "No se pudo conectar con el servidor.", icon: "error" });
+            }
+        },
+        columns: [
+            { data: "nombre",
+              render: function (v) { return "<strong>" + v + "</strong>"; }
+            },
+            { data: "id", orderable: false, className: "text-right",
+              render: function (v, t, row) {
+                return "<button class='btn btn-sm btn-outline-primary edit-est' " +
+                       "data-id='" + row.id + "' data-nombre='" + row.nombre + "' " +
+                       "data-esfinal='" + row.es_final + "'>" +
+                       "<i class='fas fa-edit'></i></button>";
+              }
+            }
+        ]
+    ,   initComplete: function () { listar_prioridades(); } // Al terminar estados, carga prioridades
     });
 }
 
@@ -182,7 +199,7 @@ function crear_estado() {
             $("#modal_crear_est").modal("hide");
             $("#form_crear_est")[0].reset();
             Swal.fire({ title: "¡Éxito!", text: response.msg, icon: "success" });
-            listar_estados();
+            $("#tabla_estados").DataTable().ajax.reload();
         } else {
             Swal.fire({ title: "¡Atención!", text: response.error, icon: "info" });
         }
@@ -212,7 +229,7 @@ function guardar_edicion_estado() {
         if (response.success) {
             $("#modal_editar_est").modal("hide");
             Swal.fire({ title: "¡Éxito!", text: response.msg, icon: "success" });
-            listar_estados();
+            $("#tabla_estados").DataTable().ajax.reload();
         } else {
             Swal.fire({ title: "¡Atención!", text: response.error, icon: "info" });
         }
@@ -221,32 +238,46 @@ function guardar_edicion_estado() {
     });
 }
 function listar_prioridades() {
-    $.ajax({
-        url: "/TICKETUCAD/app/models/configuraciones/prioridades/listar.php",
-        method: "POST",
-        dataType: "json",
-    }).done(function (response) {
-        if (response.success) {
-            let filas = "";
-            response.data.forEach(function (p) {
-                filas +=
-                "<tr>" +
-                    "<td><strong>" + p.nombre + "</strong></td>" +
-                    "<td class='text-muted'>" + p.nivel + "</td>" +
-                    "<td class='text-right'>" +
-                        "<button class='btn btn-sm btn-outline-primary' " +
-                            "onclick='abrir_editar_prioridad(" + p.id + ", \"" + p.nombre + "\", " + p.nivel + ")'>" +
-                            "<i class='fas fa-edit'></i>" +
-                        "</button>" +
-                    "</td>" +
-                "</tr>";
-            });
-            $("#tb_prioridades").html(filas);
-        } else {
-            Swal.fire({ title: "¡Atención!", text: response.error, icon: "info" });
-        }
-    }).fail(function (jqXHR, textStatus) {
-        Swal.fire({ title: "¡Atención!", text: `Error: ${textStatus}`, icon: "info" });
+    if ($.fn.DataTable.isDataTable("#tabla_prioridades")) {
+        $("#tabla_prioridades").DataTable().clear();
+        $("#tabla_prioridades").DataTable().destroy();
+    }
+    $("#tabla_prioridades").DataTable({
+        destroy: true,
+        info: true,
+        filter: true,
+        lengthChange: false,
+        pageLength: 3,
+        responsive: true,
+        language: {
+            search: "Buscar:",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ prioridades",
+            infoEmpty: "Sin prioridades",
+            paginate: { previous: "Anterior", next: "Siguiente" },
+            zeroRecords: "No se encontraron prioridades"
+        },
+        ajax: {
+            url: "/TICKETUCAD/app/models/configuraciones/prioridades/listar.php",
+            method: "POST",
+            dataSrc: "data",
+            error: function () {
+                Swal.fire({ title: "¡Error!", text: "No se pudo conectar con el servidor.", icon: "error" });
+            }
+        },
+        columns: [
+            { data: "nombre",
+              render: function (v) { return "<strong>" + v + "</strong>"; }
+            },
+            { data: "nivel", className: "text-muted" },
+            { data: "id", orderable: false, className: "text-right",
+              render: function (v, t, row) {
+                return "<button class='btn btn-sm btn-outline-primary edit-pri' " +
+                       "data-id='" + row.id + "' data-nombre='" + row.nombre + "' " +
+                       "data-nivel='" + row.nivel + "'>" +
+                       "<i class='fas fa-edit'></i></button>";
+              }
+            }
+        ]
     });
 }
 
@@ -264,7 +295,7 @@ function crear_prioridad() {
             $("#modal_crear_pri").modal("hide");
             $("#form_crear_pri")[0].reset();
             Swal.fire({ title: "¡Éxito!", text: response.msg, icon: "success" });
-            listar_prioridades();
+            $("#tabla_prioridades").DataTable().ajax.reload();
         } else {
             Swal.fire({ title: "¡Atención!", text: response.error, icon: "info" });
         }
@@ -294,7 +325,7 @@ function guardar_edicion_prioridad() {
         if (response.success) {
             $("#modal_editar_pri").modal("hide");
             Swal.fire({ title: "¡Éxito!", text: response.msg, icon: "success" });
-            listar_prioridades();
+            $("#tabla_prioridades").DataTable().ajax.reload();
         } else {
             Swal.fire({ title: "¡Atención!", text: response.error, icon: "info" });
         }

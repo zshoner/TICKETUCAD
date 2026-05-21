@@ -1,7 +1,7 @@
 <?php
 require_once '../../php/conexion.php';
 if (!$conexion) {
-    echo json_encode(['success' => false, 'error' => 'Sin conexión a la base de datos']);
+    echo json_encode(['success' => false, 'error' => 'Sin conexión a la base de datos', 'data' => []]);
     exit;
 }
 
