@@ -84,7 +84,7 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
 
     .table-custom tbody tr:hover td { background-color: rgba(255, 255, 255, 0.03) !important; }
 
-    /* ── Formularios y etiquetas ── */
+    /* ── Formularios y etiquetas generales ── */
     .section-label { 
         font-size: 0.7rem; font-weight: 800; text-transform: uppercase; 
         color: #60a5fa; display: flex; align-items: center; 
@@ -92,43 +92,64 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
     }
     
     .section-label::before { 
-        content: ""; display: inline-block; width: 4px; height: 14px; 
-        background: #2563eb; margin-right: 8px; border-radius: 2px; 
+        content: ""; 
+        display: inline-block; 
+        width: 3px; 
+        height: 15px; 
+        background: #2563eb; 
+        margin-right: 10px; 
+        vertical-align: middle;
+        border-radius: 4px;
     }
 
-    .form-control-custom { 
-        background-color: rgba(255,255,255,0.05) !important; 
-        border: 1px solid rgba(255,255,255,0.1) !important; 
-        color: #f1f5f9 !important; border-radius: 10px; padding: 0.6rem 1rem;
+    .text-muted {
+        color: #94a3b8 !important; /* Gris azulado para que no se pierda */
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: inline-block;
     }
 
     label.text-muted { color: #94a3b8 !important; font-weight: 700; }
 
-    .btn-export { 
-        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); 
-        color: #fff; padding: 0.7rem 1.5rem; border-radius: 10px; font-weight: 600; border: none; 
-    }
-
-    .btn-generate { background-color: #f8fafc; color: #0f172a; font-weight: 800; border-radius: 10px; border: none; transition: 0.2s; }
-    .btn-generate:hover { background-color: #ffffff; transform: translateY(-2px); }
-
-    /* Corrección para coherencia visual en los desplegables */
-    .form-control-custom {
+    /* Inputs estándar y selectores nativos */
+    .form-control-custom { 
+        background-color: rgba(255,255,255,0.05) !important; 
+        border: 1px solid rgba(255,255,255,0.1) !important; 
+        color: #f1f5f9 !important; 
+        border-radius: 10px; 
+        padding: 0.6rem 1rem;
         cursor: pointer;
         appearance: none; /* Elimina estilos nativos para mayor control */
     }
 
-    /* Estilo para las opciones del menú desplegable */
     .form-control-custom option {
         background-color: #111827 !important; /* Azul muy oscuro/negro sólido */
         color: #ffffff !important;
         padding: 10px;
     }
 
-    /* Ajuste para el icono del calendario en los inputs de fecha */
+    .form-control-custom:focus {
+        background-color: rgba(255,255,255,0.08) !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        outline: none;
+    }
+
+    /* Inputs de tipo fecha específicos */
+    input[type="date"].form-control-custom {
+        color-scheme: dark; /* Fuerza al navegador a usar el picker oscuro nativo */
+        background-color: #1f2937 !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
     input[type="date"].form-control-custom::-webkit-calendar-picker-indicator {
         filter: invert(1); /* Cambia el icono negro por blanco */
-        opacity: 0.6;
+        opacity: 0.7;
         cursor: pointer;
     }
 
@@ -136,13 +157,14 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
         opacity: 1;
     }
 
-    /* Estilo para cuando el selector está enfocado */
-    .form-control-custom:focus {
-        background-color: rgba(255,255,255,0.08) !important;
-        border-color: #2563eb !important;
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-        outline: none;
+    /* Botones de acción */
+    .btn-export { 
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); 
+        color: #fff; padding: 0.7rem 1.5rem; border-radius: 10px; font-weight: 600; border: none; 
     }
+
+    .btn-generate { background-color: #f8fafc; color: #0f172a; font-weight: 800; border-radius: 10px; border: none; transition: 0.2s; }
+    .btn-generate:hover { background-color: #ffffff; transform: translateY(-2px); }
 
     /* Estilos para el SLA en la tabla */
     .badge-sla-danger {
@@ -182,53 +204,117 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
         text-transform: uppercase;
     }
 
-    input[type="date"].form-control-custom {
-        color-scheme: dark; /* Esto le dice al navegador que use el picker oscuro nativo */
+    /* =========================================================================
+       ESTILOS PERSONALIZADOS PARA LA PAGINACIÓN (TICKET UCAD)
+       ========================================================================= */
+    #contenedorPaginacion .page-link {
+        background-color: #1f2937 !important; /* Gris Azulado Oscuro (Mismo fondo de tus cards) */
+        border-color: rgba(255, 255, 255, 0.05) !important; /* Borde sutil */
+        color: #94a3b8 !important; /* Texto gris atenuado */
+        transition: all 0.2s ease;
+    }
+
+    #contenedorPaginacion .page-link:hover {
+        background-color: #374151 !important; /* Un gris un poco más claro */
+        color: #ffffff !important; /* El texto se ilumina en blanco */
+    }
+
+    #contenedorPaginacion .page-item.active .page-link {
+        background-color: #2563eb !important; /* Azul Cobalto institucional */
+        border-color: #2563eb !important;
+        color: #ffffff !important; /* Texto blanco brillante */
+        box-shadow: 0 0 10px rgba(37, 99, 235, 0.3) !important; /* Destello azul suave */
+    }
+
+    #contenedorPaginacion .page-item.disabled .page-link {
+        background-color: #111827 !important; /* Fondo del contenedor general */
+        border-color: rgba(255, 255, 255, 0.02) !important;
+        color: #4b5563 !important; /* Texto bien apagado */
+        cursor: not-allowed;
+    }
+
+    /* =========================================================================
+       ESTILOS PERSONALIZADOS PARA EL DESPLEGABLE DE SELECT2 (ABIERTO)
+       ========================================================================= */
+    .select2-container--bootstrap4 .select2-dropdown {
+        background-color: #1f2937 !important; /* Mismo fondo de tus tarjetas */
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .select2-container--bootstrap4 .select2-search--dropdown {
         background-color: #1f2937 !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(255,255,255,0.2) !important;
-        padding: 0.6rem 1rem;
-        border-radius: 10px;
-        cursor: pointer;
+        padding: 8px !important;
     }
 
-    /* Asegurar que el icono del calendario sea blanco */
-    input[type="date"].form-control-custom::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-        opacity: 0.7;
-        cursor: pointer;
+    .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+        background-color: #111827 !important; /* Fondo más oscuro para contraste */
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important; /* Texto blanco al escribir */
+        border-radius: 4px !important;
     }
 
-    input[type="date"].form-control-custom::-webkit-calendar-picker-indicator:hover {
-        opacity: 1;
+    .select2-container--bootstrap4 .select2-results__option {
+        background-color: #1f2937 !important;
+        color: #94a3b8 !important; /* Texto gris claro/azulado legible */
+        padding: 6px 12px !important;
     }
 
-    /* Estilo para los títulos de los filtros que se ven en image_e64443.png */
-    .text-muted {
-        color: #94a3b8 !important; /* Gris azulado para que no se pierda */
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 5px;
-        display: inline-block;
+    .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected],
+    .select2-container--bootstrap4 .select2-results__option[aria-selected=true] {
+        background-color: #2563eb !important; /* Azul Cobalto institucional */
+        color: #ffffff !important; /* Texto blanco */
     }
 
-    /* El separador azul al lado de RANGO DE FECHAS */
-    .section-label::before { 
-        content: ""; 
-        display: inline-block; 
-        width: 3px; 
-        height: 15px; 
-        background: #2563eb; 
-        margin-right: 10px; 
-        vertical-align: middle;
-        border-radius: 4px;
+    .select2-container--bootstrap4 .select2-results__message {
+        background-color: #1f2937 !important;
+        color: #64748b !important;
+    }
+
+    /* =========================================================================
+       NUEVA CORRECCIÓN: VISIBILIDAD MÁXIMA PARA SELECT2 (CERRADO)
+       ========================================================================= */
+    /* 1. Marco contenedor base cuando está inactivo */
+    .select2-container--bootstrap4 .select2-selection--single {
+        background-color: #1f2937 !important; /* Acoplado a tus inputs de fecha */
+        border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Grosor unificado */
+        height: calc(1.5em + 0.75rem + 2px) !important; /* Simetría perfecta de altura */
+        display: flex !important;
+        align-items: center !important;
+        border-radius: 10px !important; /* Redondeado igual a tus campos */
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    /* 2. Forzar texto blanco brillante cuando YA hay un elemento seleccionado */
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+        color: #ffffff !important; 
+        font-size: 0.875rem !important;
+        font-weight: 500 !important;
+        padding-left: 1rem !important;
+    }
+
+    /* 3. Forzar texto gris claro visible para el Placeholder ("Seleccione una opción") */
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered .select2-selection__placeholder {
+        color: #94a3b8 !important; /* Gris idéntico al de tus etiquetas de formulario */
+        font-weight: 500 !important;
+    }
+
+    /* 4. Aclarar la flechita nativa del Select2 */
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow b {
+        border-color: #94a3b8 transparent transparent transparent !important;
+    }
+
+    /* 5. Comportamiento visual de enfoque activo */
+    .select2-container--bootstrap4.select2-container--focus .select2-selection--single {
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
     }
 </style>
 
 <div class="container-fluid py-4" id="moduloReportesCompleto">
     <div class="header-banner d-flex justify-content-between align-items-center flex-wrap shadow-sm">
         <div>
-            <h2 class="mb-0 font-weight-bold text-white">Reportes del Sistema - Ticket UCAD</h2>
+            <h2 class="mb-0 font-weight-bold text-white">Reportes del Sistema</h2>
             <p class="mb-0 small text-muted">TICKET UCAD</p>
         </div>
         <div class="mt-2 mt-md-0">
@@ -263,15 +349,15 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
                 <div class="card card-custom p-4">
                     <div class="section-label">Filtros específicos</div>
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-4 d-flex flex-column">
                             <label class="small text-muted">Técnico</label>
-                            <select id="sel_tecnico" class="form-control form-control-custom">
+                            <select id="sel_tecnico" style="width: 100%;">
                                 <option value="">Todos los técnicos</option>
                             </select>
                         </div>
-                        <div class="col-4">
+                        <div class="col-4 d-flex flex-column">
                             <label class="small text-muted">Departamento</label>
-                            <select id="sel_depto" class="form-control form-control-custom">
+                            <select id="sel_depto" style="width: 100%;">
                                 <option value="">Cualquier Departamento</option>
                             </select>
                         </div>
@@ -333,6 +419,16 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
                 </tbody>
             </table>
         </div>
+        
+        <div class="d-flex justify-content-between align-items-center flex-wrap p-3 border-top" style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.05) !important;">
+            <div class="small text-muted my-1">
+                Mostrando <span id="paginacionInfo" class="font-weight-bold text-white">0 a 0</span> de <span id="paginacionTotal" class="font-weight-bold text-white">0</span> registros
+            </div>
+            <nav class="my-1">
+                <ul class="pagination pagination-sm mb-0" id="contenedorPaginacion">
+                    </ul>
+            </nav>
+        </div>
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4 card-custom p-3">
@@ -357,5 +453,9 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
     </div>
 </div>
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.js"></script>
 <script src="app/controllers/reportes/reportes.js"></script>

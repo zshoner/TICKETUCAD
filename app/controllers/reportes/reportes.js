@@ -1,6 +1,9 @@
 $(document).ready(function() {
-    // Arreglo global para guardar los tickets en memoria y filtrarlos localmente
+    // Arreglo global para guardar los tickets y filtrarlos localmente sin recargar
     let datosLocales = [];
+    let datosFiltradosActuales = []; // Guarda el filtro activo para la paginación
+    let paginaActual = 1;
+    const registrosPorPagina = 6; // Cantidad MÁXIMA de filas que se van a ver por página
 
     // =========================================================================
     // FUNCIÓN AUXILIAR: Valida si el backend devolvió un acceso restringido
@@ -59,10 +62,19 @@ $(document).ready(function() {
                         htmlEst += `<option value="${e.nombre}">${e.nombre}</option>`;
                     });
                     $('#sel_estado').html(htmlEst);
+
+                    // CORRECCIÓN SELECT2: Inicialización con tema bootstrap4 y buscador nativo activo
+                    if (typeof $.fn.select2 !== 'undefined') {
+                        $('#sel_tecnico, #sel_depto').select2({
+                            theme: 'bootstrap4', // Acopla el diseño al entorno gráfico
+                            placeholder: "Seleccione una opción",
+                            allowClear: true,
+                            width: '100%' // Previene que Select2 desborde el contenedor .col-4
+                        });
+                    }
                 }
             },
             error: function(xhr) {
-                // Controlar error si la respuesta del servidor es una restriccion
                 try {
                     let jsonErr = JSON.parse(xhr.responseText);
                     if (verificarRestriccion(jsonErr)) return;
@@ -76,13 +88,22 @@ $(document).ready(function() {
     cargarSelectores();
 
     // =========================================================================
-    // 2. FUNCIÓN PARA DIBUJAR LAS FILAS DE LOS TICKETS EN LA TABLA HTML
+    // 2. FUNCIÓN PARA MOSTRAR LAS FILAS DE LA PÁGINA ACTUAL (ESTRICTO MAX 6)
     // =========================================================================
-    function pintarTabla(data) {
+    function pintarTablaPaginada(pagina) {
+        paginaActual = pagina;
         let rows = '';
+        const totalRegistros = datosFiltradosActuales.length;
         
-        if (data && data.length > 0) {
-            data.forEach(item => {
+        if (totalRegistros > 0) {
+            // Calcular los indices para cortar el arreglo de datos en bloques de 5
+            const indiceInicio = (paginaActual - 1) * registrosPorPagina;
+            const indiceFin = Math.min(indiceInicio + registrosPorPagina, totalRegistros);
+            
+            // Extraer estrictamente los 5 registros asignados a la pagina actual
+            const registrosPagina = datosFiltradosActuales.slice(indiceInicio, indiceFin);
+            
+            registrosPagina.forEach(item => {
                 // Formatear la fecha de creacion al estilo corto: 13 may 2026
                 const fechaObj = new Date(item.fecha_creacion);
                 const opcionesFecha = { day: '2-digit', month: 'short', year: 'numeric' };
@@ -125,24 +146,91 @@ $(document).ready(function() {
                         </td>
                     </tr>`;
             });
+            
+            // Actualizar el texto descriptivo de la paginacion
+            $('#paginacionInfo').text(`${indiceInicio + 1} a ${indiceFin}`);
+            $('#paginacionTotal').text(totalRegistros);
+            
         } else {
-            rows = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay registros para mostrar.</td></tr>';
+            rows = '<tr><td colspan="6" class="text-center py-5 text-muted">No hay registros para mostrar.</td></tr>';
+            $('#paginacionInfo').text('0 a 0');
+            $('#paginacionTotal').text('0');
         }
-        // Inyectar las filas en el cuerpo de la tabla
+        
+        // Inyectar de forma controlada el HTML en el contenedor
         $('#tablaReportesBody').html(rows);
+        construirControlesPaginacion(totalRegistros);
     }
 
     // =========================================================================
-    // 3. BOTÓN PARA EJECUTAR LA BÚSQUEDA MEDIANTE AJAX
+    // 2.1 GENERAR BOTONES DE PAGINACIÓN DE FORMA DINÁMICA
+    // =========================================================================
+    function construirControlesPaginacion(totalRegistros) {
+        const totalPaginas = Math.ceil(totalRegistros / registrosPorPagina);
+        let htmlPaginador = '';
+        
+        if (totalPaginas > 1) {
+            // Boton de Anterior
+            htmlPaginador += `<li class="page-item ${paginaActual === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${paginaActual - 1}">&laquo;</a>
+            </li>`;
+            
+            // Crear los botones numericos de las paginas
+            for (let i = 1; i <= totalPaginas; i++) {
+                htmlPaginador += `<li class="page-item ${paginaActual === i ? 'active' : ''}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>`;
+            }
+            
+            // Boton de Siguiente
+            htmlPaginador += `<li class="page-item ${paginaActual === totalPaginas ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${paginaActual + 1}">&raquo;</a>
+            </li>`;
+        }
+        
+        $('#contenedorPaginacion').html(htmlPaginador);
+    }
+
+    // Detectar el clic en los botones del paginador
+    $(document).on('click', '#contenedorPaginacion .page-link', function(e) {
+        e.preventDefault();
+        const nuevaPagina = parseInt($(this).data('page'));
+        if (nuevaPagina && nuevaPagina !== paginaActual) {
+            pintarTablaPaginada(nuevaPagina);
+        }
+    });
+
+    // =========================================================================
+    // 3. BOTÓN PARA EJECUTAR LA BÚSQUEDA MEDIANTE AJAX (CON VALIDACIÓN DE FECHAS)
     // =========================================================================
     $('#btnGenerarVista').on('click', function() {
         const btn = $(this);
+        
+        // Capturar los inputs de fecha para validar del lado del cliente
+        const fechaInicioVal = $('#fecha_inicio').val();
+        const fechaFinVal = $('#fecha_fin').val();
+
+        // BLINDAJE: Si falta alguna fecha, frena la consulta y tira SweetAlert2 institucional
+        if (!fechaInicioVal || !fechaFinVal) {
+            Swal.fire({
+                icon: 'warning',
+                title: '<span style="color: #ffffff; font-family: \'Segoe UI\', sans-serif;">Rango de Fechas Requerido</span>',
+                html: `<p style="color: #94a3b8; font-size: 14.5px; margin-bottom: 0; font-family: 'Segoe UI', sans-serif;">Debe seleccionar una fecha de inicio y una fecha límite para poder consultar los reportes del sistema.</p>`,
+                confirmButtonColor: '#2563eb', // Azul Cobalto
+                confirmButtonText: 'Entendido',
+                background: '#111827', // Fondo Oscuro
+                color: '#fff',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+            return false; // Corta la ejecución del proceso inmediatamente
+        }
+
         btn.prop('disabled', true).text('Buscando...');
 
-        // Guardar los filtros seleccionados por el usuario
         const filtros = {
-            inicio: $('#fecha_inicio').val(),
-            fin: $('#fecha_fin').val(),
+            inicio: fechaInicioVal,
+            fin: fechaFinVal,
             tecnico: $('#sel_tecnico').val(),
             departamento: $('#sel_depto').val(),
             estado: $('#sel_estado').val()
@@ -154,7 +242,6 @@ $(document).ready(function() {
             data: filtros,
             dataType: 'json',
             success: function(res) {
-                // Verificar que no haya problemas de sesion o permisos
                 if (verificarRestriccion(res)) {
                     btn.prop('disabled', false).text('Generar Vista');
                     return;
@@ -162,15 +249,18 @@ $(document).ready(function() {
 
                 if (res.status === 'success') {
                     datosLocales = res.data; 
-                    pintarTabla(datosLocales);
+                    datosFiltradosActuales = res.data; 
                     
-                    // Actualizar los textos de las tarjetas estadisticas superiores
+                    // Renderizar el primer set de 5 filas
+                    pintarTablaPaginada(1);
+                    
+                    // Actualizar contadores analíticos superiores
                     $('#countTotal').text(res.stats.total);
                     $('#countResueltos').text(res.stats.resueltos);
                     $('#countPendientes').text(res.stats.pendientes);
                     $('#countVencidos').text(res.stats.vencidos);
 
-                    // Copiar los filtros elegidos a los inputs ocultos del formulario del PDF
+                    // Sincronizar inputs ocultos de exportación
                     $('#h_inicio').val(filtros.inicio);
                     $('#h_fin').val(filtros.fin);
                     $('#h_tecnico').val(filtros.tecnico);
@@ -189,7 +279,7 @@ $(document).ready(function() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Falla de Comunicación',
-                    text: 'Ocurrió un problem de conectividad al procesar la auditoría analítica.',
+                    text: 'Ocurrió un problema de conectividad al procesar la auditoría analítica.',
                     confirmButtonColor: '#2563eb',
                     background: '#111827',
                     color: '#fff'
@@ -205,57 +295,61 @@ $(document).ready(function() {
         if (!datosLocales || datosLocales.length === 0) return;
 
         const idStat = $(this).find('.stat-number').attr('id');
-        let filtrados = [];
 
-        // Evaluar que tarjeta fue cliqueada para filtrar usando JS local
         if (idStat === 'countTotal') {
-            filtrados = datosLocales;
+            datosFiltradosActuales = datosLocales;
         } else if (idStat === 'countResueltos') {
-            filtrados = datosLocales.filter(t => t.es_final == 1);
+            datosFiltradosActuales = datosLocales.filter(t => t.es_final == 1);
         } else if (idStat === 'countPendientes') {
-            filtrados = datosLocales.filter(t => t.es_final == 0);
+            datosFiltradosActuales = datosLocales.filter(t => t.es_final == 0);
         } else if (idStat === 'countVencidos') {
-            filtrados = datosLocales.filter(t => t.sla_status === 'VENCIDO');
+            datosFiltradosActuales = datosLocales.filter(t => t.sla_status === 'VENCIDO');
         }
 
-        // Redibujar la tabla con los elementos filtrados localmente
-        pintarTabla(filtrados);
+        // Al cambiar de filtro, rearma la estructura limitando a 5 items
+        pintarTablaPaginada(1);
     });
 
     // =========================================================================
     // 5. BOTÓN PARA REINICIAR TODOS LOS CAMPOS Y CONTADORES
     // =========================================================================
     $('#btnLimpiar').on('click', function() {
-        $('#fecha_inicio, #fecha_fin, #sel_tecnico, #sel_depto, #sel_estado').val('');
-        $('#tablaReportesBody').html('<tr><td colspan="6" class="text-center py-4 text-muted">Seleccione filtros para ver datos</td></tr>');
-        $('.stat-number').text('0');
-        datosLocales = []; 
+        $('#fecha_inicio, #fecha_fin, #sel_estado').val('');
         
-        // Limpiar los valores ocultos encargados de enviar los datos al PDF
+        // CORRECCIÓN SELECT2: Reseteo correcto disparando el evento de actualización visual (.trigger)
+        if (typeof $.fn.select2 !== 'undefined') {
+            $('#sel_tecnico, #sel_depto').val('').trigger('change');
+        } else {
+            $('#sel_tecnico, #sel_depto').val('');
+        }
+
+        $('#tablaReportesBody').html('<tr><td colspan="6" class="text-center py-5 text-muted">Defina los filtros y presione "Generar Vista".</td></tr>');
+        $('.stat-number').text('0');
+        
+        datosLocales = []; 
+        datosFiltradosActuales = [];
+        $('#contenedorPaginacion').html('');
+        $('#paginacionInfo').text('0 a 0');
+        $('#paginacionTotal').text('0');
+        
         $('#h_inicio, #h_fin, #h_tecnico, #h_depto, #h_estado').val('');
     });
 
     // =========================================================================
-    // 6. DETENER EL ENVÍO DEL PDF SI NO SE CUMPLEN LOS REQUISITOS DE FECHA O DATOS
+    // 6. DETENER EL ENVÍO DEL PDF SI NO SE CUMPLEN LOS REQUISITOS
     // =========================================================================
     $(document).on('submit', '#formExportar', function(e) {
-        
-        // Sincronizar de nuevo los campos para evitar cambios imprevistos del usuario
         $('#h_inicio').val($('#fecha_inicio').val());
         $('#h_fin').val($('#fecha_fin').val());
         $('#h_tecnico').val($('#sel_tecnico').val());
         $('#h_depto').val($('#sel_depto').val());
         $('#h_estado').val($('#sel_estado').val());
 
-        // Leer los valores de control finales
         const fechaInicio = $('#h_inicio').val();
         const fechaFin = $('#h_fin').val();
         const totalTickets = parseInt($('#countTotal').text().trim()) || 0;
 
-        // Comprobar si faltan las fechas o si no se ha devuelto ningun ticket en la tabla
         if (!fechaInicio || !fechaFin || totalTickets === 0) {
-            
-            // Frenar el envio del formulario nativo inmediatamente
             e.preventDefault();
             e.stopPropagation();
 
@@ -270,7 +364,6 @@ $(document).ready(function() {
                 mensajeAlerta = 'No se encontraron registros de auditoría en el periodo seleccionado. Modifique el rango de tiempo para generar un documento institucional válido.';
             }
 
-            // Mostrar el aviso de advertencia con SweetAlert2
             Swal.fire({
                 icon: 'warning',
                 title: `<span style="color: #ffffff; font-family: 'Segoe UI', sans-serif;">${tituloAlerta}</span>`,
