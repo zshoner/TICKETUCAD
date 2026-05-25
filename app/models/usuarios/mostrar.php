@@ -1,5 +1,18 @@
 <?php
 require_once '../php/conexion.php';
+error_reporting(0);
+
+// Si la conexión falló, reintenta una vez
+if (!$conexion) {
+    $conexion = @mysqli_connect($host, $username, $password, $dbname, $port);
+    if ($conexion) $conexion->set_charset("utf8");
+}
+
+// Si sigue sin conexión, avisa al JS para que reintente
+if (!$conexion) {
+    echo json_encode(['data' => [], 'recordsTotal' => 0, 'recordsFiltered' => 0, 'connection_error' => true]);
+    exit;
+}
 
 try {
     $params        = $_POST;

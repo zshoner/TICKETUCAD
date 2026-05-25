@@ -1,21 +1,32 @@
 <?php
+header('Content-Type: application/json');
+error_reporting(0);
 require_once __DIR__ . '/../../permiso_rol/verificacion_rol.php';
 requerirAdmin();
 require_once '../../php/conexion.php';
+
+// Si la conexión falló, reintenta una vez
 if (!$conexion) {
-    echo json_encode(['success' => false, 'error' => 'Sin conexión a la base de datos', 'data' => []]);
-    exit;
+    $conexion = @mysqli_connect($host, $username, $password, $dbname, $port);
+    if ($conexion) $conexion->set_charset("utf8");
 }
-// Consulta todas las categorías ordenadas por nombre
-$res  = mysqli_query($conexion, "SELECT id, nombre FROM categorias ORDER BY nombre");
-$data = [];
-if (!$res) {
-    echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
+
+// Si sigue sin conexión, avisa al JS para que reintente
+if (!$conexion) {
+    echo json_encode(['success' => false, 'data' => [], 'connection_error' => true]);
     exit;
 }
 
-// Recorre los resultados y los guarda en el array
-while ($row = mysqli_fetch_assoc($res)) $data[] = $row;
+try {
+    $res  = mysqli_query($conexion, "SELECT id, nombre FROM categorias ORDER BY nombre");
+    $data = [];
 
-// Devuelve los datos en JSON al JS
-echo json_encode(['success' => true, 'data' => $data]);
+    while ($row = mysqli_fetch_assoc($res)) $data[] = $row;
+
+    $response = ['success' => true, 'data' => $data];
+
+} catch (Exception $e) {
+    $response = ['success' => false, 'data' => [], 'error' => $e->getMessage()];
+}
+
+echo json_encode($response);

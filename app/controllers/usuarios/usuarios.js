@@ -1,3 +1,4 @@
+$.fn.dataTable.ext.errMode = 'none'; // Suprime el popup nativo de error de DataTables
 $(function () {
     cargar_roles();
     listar_usuarios();
@@ -38,7 +39,7 @@ $(function () {
     });
 });
 
-function cargar_roles(){
+function cargar_roles(intento = 1){
     $.ajax({
         url: "/TICKETUCAD/app/models/usuarios/listar_roles.php",
         method: "POST",
@@ -52,19 +53,25 @@ function cargar_roles(){
             }
             $("#crear_rol").html(opts);
             $("#editar_rol").html(opts);
-        }else{
+        } else if (intento < 3) {
+            setTimeout(function () { cargar_roles(intento + 1); }, 2000);
+        } else {
             Swal.fire({
                 title: "¡Atención!",
-                text: response.error,
-                icon: "info"
+                text: response.error + ". Por favor refresca la página.",
+                icon: "warning"
             });
         }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        Swal.fire({
-            title: "¡Atención!",
-            text: `Ocurrió un error al conectar con el servidor: ${textStatus}`,
-            icon: "info"
-        });
+    }).fail(function () {
+        if (intento < 3) {
+            setTimeout(function () { cargar_roles(intento + 1); }, 2000);
+        } else {
+            Swal.fire({
+                title: "¡Atención!",
+                text: "Error de conexión. Por favor refresca la página.",
+                icon: "warning"
+            });
+        }
     });
 }
 
@@ -95,6 +102,11 @@ function listar_usuarios() {
             url: "/TICKETUCAD/app/models/usuarios/mostrar.php",
             method: "POST",
             dataType: "json",
+            error: function () {
+                setTimeout(function () {
+                    $("#tabla_usuarios").DataTable().ajax.reload();
+                }, 2000); // Reintenta automáticamente a los 2 segundos
+            }
         },
         columns: [
             { data: "id", orderable: true,
@@ -168,11 +180,11 @@ function crear_usuario(){
                 icon: "info"
             });
         }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
+    }).fail(function () {
         Swal.fire({
             title: "¡Atención!",
-            text: `Ocurrió un error al conectar con el servidor: ${textStatus}`,
-            icon: "info"
+            text: "Error de conexión. Por favor refresca la página.",
+            icon: "warning"
         });
     });
 }
@@ -216,11 +228,11 @@ function guardar_edicion(){
                 icon: "info"
             });
         }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
+    }).fail(function () {
         Swal.fire({
             title: "¡Atención!",
-            text: `Ocurrió un error al conectar con el servidor: ${textStatus}`,
-            icon: "info"
+            text: "Error de conexión. Por favor refresca la página.",
+            icon: "warning"
         });
     });
 }
@@ -257,11 +269,11 @@ function cambiar_estado(id, estado_actual){
                         icon: "info"
                     });
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+            }).fail(function () {
                 Swal.fire({
                     title: "¡Atención!",
-                    text: `Ocurrió un error al conectar con el servidor: ${textStatus}`,
-                    icon: "info"
+                    text: "Error de conexión. Por favor refresca la página.",
+                    icon: "warning"
                 });
             });
         }

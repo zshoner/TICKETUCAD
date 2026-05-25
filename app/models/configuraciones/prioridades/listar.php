@@ -1,24 +1,32 @@
 <?php
+header('Content-Type: application/json');
+error_reporting(0);
 require_once __DIR__ . '/../../permiso_rol/verificacion_rol.php';
 requerirAdmin();
 require_once '../../php/conexion.php';
+
+// Si la conexión falló, reintenta una vez
 if (!$conexion) {
-    echo json_encode(['success' => false, 'error' => 'Sin conexión a la base de datos', 'data' => []]);
+    $conexion = @mysqli_connect($host, $username, $password, $dbname, $port);
+    if ($conexion) $conexion->set_charset("utf8");
+}
+
+// Si sigue sin conexión, avisa al JS para que reintente
+if (!$conexion) {
+    echo json_encode(['success' => false, 'data' => [], 'connection_error' => true]);
     exit;
 }
 
-// Es vital ordenar por el nivel (ej: 1 = Urgente, 2 = Alta, etc.)
-$res  = mysqli_query($conexion, "SELECT id, nombre, nivel FROM prioridades ORDER BY nivel ASC");
-$data = [];
+try {
+    $res  = mysqli_query($conexion, "SELECT id, nombre, nivel FROM prioridades ORDER BY nivel ASC");
+    $data = [];
 
-if (!$res) {
-    echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
-    exit;
+    while ($row = mysqli_fetch_assoc($res)) $data[] = $row;
+
+    $response = ['success' => true, 'data' => $data];
+
+} catch (Exception $e) {
+    $response = ['success' => false, 'data' => [], 'error' => $e->getMessage()];
 }
 
-while ($row = mysqli_fetch_assoc($res)) {
-    $data[] = $row;
-
-}
-
-echo json_encode(['success' => true, 'data' => $data]);
+echo json_encode($response);

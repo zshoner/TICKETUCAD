@@ -1,8 +1,15 @@
 <?php
 header('Content-Type: application/json');
+error_reporting(0);
 require_once __DIR__ . '/../permiso_rol/verificacion_rol.php';
 requerirAdmin();
 require("../php/conexion.php");
+
+// Si la conexión falló, reintenta una vez
+if (!$conexion) {
+    $conexion = @mysqli_connect($host, $username, $password, $dbname, $port);
+    if ($conexion) $conexion->set_charset("utf8");
+}
 
 try {
     $sql = "SELECT id, nombre FROM roles ORDER BY nombre";

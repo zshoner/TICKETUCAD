@@ -121,6 +121,12 @@ const viewMap = {
     form_user:    '/TICKETUCAD/app/views/forms/form_user.html',
 };
 
+// Mapa: vista → archivo JS del controlador que debe re-ejecutarse cada vez
+const scriptMap = {
+    usuarios:      '/TICKETUCAD/app/controllers/usuarios/usuarios.js',
+    configuracion: '/TICKETUCAD/app/controllers/configuraciones/configuraciones.js',
+};
+
 function cargarVista(view) {
     const rol = obtenerRolActual();
 
@@ -142,8 +148,13 @@ function cargarVista(view) {
     if (!url) return;
 
     $('#main-content').load(url, function () {
+        // Tickets: la función ya está cargada globalmente, solo la llamamos
         if (view === 'tickets' && typeof extraerTickets === 'function') {
             extraerTickets();
+        }
+        // Usuarios / Configuraciones: forzar re-ejecución del JS en cada visita
+        if (scriptMap[view]) {
+            $.getScript(scriptMap[view]);
         }
     });
 }

@@ -1,7 +1,7 @@
-$.fn.dataTable.ext.errMode = 'none'; // Suprime el popup nativo de error de DataTables
+$.fn.dataTable.ext.errMode = 'none';
 $(document).ready(function () {
-    listar_categorias(); // Inicia la cadena: categorías → estados → prioridades (una a la vez para no saturar Clever Cloud)
-
+    listar_categorias();
+    
     $("#form_crear_cat").on("submit", function (e) { e.preventDefault(); crear_categoria(); });
     $("#form_editar_cat").on("submit", function (e) { e.preventDefault(); guardar_edicion_categoria(); });
 
@@ -109,7 +109,7 @@ function listar_categorias() {
         info: true,
         filter: true,
         lengthChange: false,
-        pageLength: 5,
+        pageLength: 3,
         responsive: true,
         language: {
             search: "Buscar:",
@@ -123,7 +123,7 @@ function listar_categorias() {
             method: "POST",
             dataSrc: "data",
             error: function () {
-                Swal.fire({ title: "¡Error!", text: "No se pudo conectar con el servidor.", icon: "error" });
+                Swal.fire({ title: "¡Atención!", text: "Error de conexión. Por favor refresca la página.", icon: "warning" });
             }
         },
         columns: [
@@ -138,7 +138,6 @@ function listar_categorias() {
               }
             }
         ]
-    ,   initComplete: function () { listar_estados(); } // Al terminar categorías, carga estados
     });
 }
 function listar_estados() {
@@ -151,7 +150,7 @@ function listar_estados() {
         info: true,
         filter: true,
         lengthChange: false,
-        pageLength: 5,
+        pageLength: 3,
         responsive: true,
         language: {
             search: "Buscar:",
@@ -165,7 +164,7 @@ function listar_estados() {
             method: "POST",
             dataSrc: "data",
             error: function () {
-                Swal.fire({ title: "¡Error!", text: "No se pudo conectar con el servidor.", icon: "error" });
+                Swal.fire({ title: "¡Atención!", text: "Error de conexión. Por favor refresca la página.", icon: "warning" });
             }
         },
         columns: [
@@ -181,7 +180,6 @@ function listar_estados() {
               }
             }
         ]
-    ,   initComplete: function () { listar_prioridades(); } // Al terminar estados, carga prioridades
     });
 }
 
@@ -261,7 +259,7 @@ function listar_prioridades() {
             method: "POST",
             dataSrc: "data",
             error: function () {
-                Swal.fire({ title: "¡Error!", text: "No se pudo conectar con el servidor.", icon: "error" });
+                Swal.fire({ title: "¡Atención!", text: "Error de conexión. Por favor refresca la página.", icon: "warning" });
             }
         },
         columns: [
