@@ -137,7 +137,9 @@ function listar_categorias() {
                        "<i class='fas fa-edit'></i></button>";
               }
             }
-        ]
+        ],
+        // Cuando categorias termina de cargar, dispara estados (carga secuencial)
+        initComplete: function () { listar_estados(); }
     });
 }
 function listar_estados() {
@@ -179,7 +181,9 @@ function listar_estados() {
                        "<i class='fas fa-edit'></i></button>";
               }
             }
-        ]
+        ],
+        // Cuando estados termina de cargar, dispara prioridades (carga secuencial)
+        initComplete: function () { listar_prioridades(); }
     });
 }
 

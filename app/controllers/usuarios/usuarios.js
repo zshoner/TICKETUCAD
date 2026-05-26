@@ -1,11 +1,88 @@
 $.fn.dataTable.ext.errMode = 'none'; // Suprime el popup nativo de error de DataTables
 $(function () {
+    // Estado actual del toggle: 'activo' o 'inactivo'
+    let estadoActual = 'activo';
+
+    // Inicializar Select2 con AJAX
+    function initSelect2() {
+        $('#buscador_usuario').select2({
+            placeholder: 'Escribí para buscar un usuario...',
+            allowClear: true,
+            dropdownParent: $('.usr-wrap'),
+            ajax: {
+                url: '/TICKETUCAD/app/models/usuarios/listar_select2.php',
+                type: 'POST',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query:  params.term || '',
+                        estado: estadoActual
+                    };
+                },
+                processResults: function (response) {
+                    return { results: response.success ? response.data : [] };
+                }
+            }
+        });
+    }
+
+    initSelect2();
+
+    // Cuando se selecciona un usuario del Select2, filtrar la tabla
+    $('#buscador_usuario').on('select2:select', function (e) {
+        let usuarioId = e.params.data.id;
+        $("#tabla_usuarios").DataTable().ajax.reload();
+        $("#tabla_usuarios").DataTable().settings()[0].ajax.data = function (d) {
+            d.filtro_estado = estadoActual;
+            d.usuario_id    = usuarioId;
+        };
+        $("#tabla_usuarios").DataTable().ajax.reload();
+    });
+
+    // Cuando se "limpia" el Select2 desde su X, mostrar todos
+    $('#buscador_usuario').on('select2:clear', function () {
+        $("#tabla_usuarios").DataTable().settings()[0].ajax.data = function (d) {
+            d.filtro_estado = estadoActual;
+            d.usuario_id    = 0;
+        };
+        $("#tabla_usuarios").DataTable().ajax.reload();
+    });
+
+    // Botón "Limpiar filtro" — reinicia todo
+    $('#btn_limpiar').on('click', function () {
+        $('#buscador_usuario').val(null).trigger('change');
+        $("#tabla_usuarios").DataTable().settings()[0].ajax.data = function (d) {
+            d.filtro_estado = estadoActual;
+            d.usuario_id    = 0;
+        };
+        $("#tabla_usuarios").DataTable().ajax.reload();
+    });
+
+    // Toggle Activos / Inactivos
+    $('#btn_activos, #btn_inactivos').on('click', function () {
+        let nuevoEstado = $(this).attr('id') === 'btn_activos' ? 'activo' : 'inactivo';
+        if (nuevoEstado === estadoActual) return;
+
+        estadoActual = nuevoEstado;
+
+        // Actualizar visual del toggle
+        $('#btn_activos, #btn_inactivos').removeClass('active');
+        $(this).addClass('active');
+
+        // Limpiar el Select2 (los resultados son del estado anterior)
+        $('#buscador_usuario').val(null).trigger('change');
+
+        // Recargar la tabla con el nuevo estado
+        $("#tabla_usuarios").DataTable().settings()[0].ajax.data = function (d) {
+            d.filtro_estado = estadoActual;
+            d.usuario_id    = 0;
+        };
+        $("#tabla_usuarios").DataTable().ajax.reload();
+    });
+
     cargar_roles();
     listar_usuarios();
-
-    $("#btn_agregar").click(function () {
-        $("#modal_crear").modal("show");
-    });
 
     $("#form_crear").on("submit", function (e) {
         e.preventDefault();
@@ -90,6 +167,8 @@ function listar_usuarios() {
         processing: true,
         serverSide: true,
         searchDelay: 500,
+        // Desactiva la busqueda nativa (ya tenemos el Select2 arriba)
+        searching: false,
         language: {
             search: "Buscar:",
             info: "Mostrando _START_ a _END_ de _TOTAL_ usuarios",
@@ -98,16 +177,21 @@ function listar_usuarios() {
             processing: "Cargando...",
             zeroRecords: "No se encontraron usuarios"
         },
-        ajax: {
-            url: "/TICKETUCAD/app/models/usuarios/mostrar.php",
-            method: "POST",
-            dataType: "json",
-            error: function () {
-                setTimeout(function () {
-                    $("#tabla_usuarios").DataTable().ajax.reload();
-                }, 2000); // Reintenta automáticamente a los 2 segundos
-            }
-        },
+       ajax: {
+    url: "/TICKETUCAD/app/models/usuarios/mostrar.php",
+    method: "POST",
+    dataType: "json",
+    data: function (d) {
+        // Estado por defecto = 'activo' (al primer load)
+        d.filtro_estado = $('#btn_inactivos').hasClass('active') ? 'inactivo' : 'activo';
+        d.usuario_id    = 0;
+    },
+    error: function () {
+        setTimeout(function () {
+            $("#tabla_usuarios").DataTable().ajax.reload();
+        }, 2000);
+    }
+},
         columns: [
             { data: "id", orderable: true,
               render: function (value) { return "<span style='color:#cbd5e1;'>#" + value + "</span>"; }

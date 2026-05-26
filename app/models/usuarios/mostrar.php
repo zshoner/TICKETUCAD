@@ -22,6 +22,14 @@ try {
     $order_dir     = $params['order'][0]['dir'] === 'asc' ? 'ASC' : 'DESC';
     $query         = ($params['search']['value'] != "") ? '%' . mysqli_real_escape_string($conexion, $params['search']['value']) . '%' : '%';
 
+    // Filtros nuevos: estado del usuario y/o usuario_id específico (cuando se selecciona del Select2)
+    $filtro_estado = $_POST['filtro_estado'] ?? 'activo';
+    if (!in_array($filtro_estado, ['activo', 'inactivo'])) $filtro_estado = 'activo';
+    $where_estado  = "AND u.estado = '$filtro_estado'";
+
+    $usuario_id    = intval($_POST['usuario_id'] ?? 0);
+    $where_usuario = $usuario_id > 0 ? "AND u.id = $usuario_id" : "";
+
     $columnas  = ['u.id', 'u.nombre', 'u.correo', 'r.nombre', 'u.estado', 'u.fecha_creacion'];
     $order_col = $columnas[$order_col_idx] ?? 'u.id';
 
@@ -32,6 +40,8 @@ try {
             FROM usuarios u
             LEFT JOIN roles r ON r.id = u.rol_id
             WHERE u.eliminado_en IS NULL
+            $where_estado
+            $where_usuario
             AND (
                 u.nombre  LIKE '$query'
                 OR u.correo LIKE '$query'

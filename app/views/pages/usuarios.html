@@ -72,6 +72,55 @@
     }
     .usr-wrap .dataTables_scrollHead { background-color: #0a1d2e; }
     .usr-wrap .dataTables_scrollBody { background-color: #061421; }
+
+    .usr-wrap .toggle-estado {
+        display: inline-flex; gap: 0; border-radius: 0.5rem; overflow: hidden;
+        border: 1px solid rgba(8,52,102,0.4);
+    }
+    .usr-wrap .toggle-estado button {
+        padding: 6px 16px; border: none; background: #061421; color: #94a3b8;
+        font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .usr-wrap .toggle-estado button.active.activo   { background: #16a34a; color: #fff; }
+    .usr-wrap .toggle-estado button.active.inactivo { background: #dc2626; color: #fff; }
+    .usr-wrap .toggle-estado button:hover:not(.active) { background: rgba(8,52,102,0.3); color: #fff; }
+
+    .usr-wrap .wrap-buscador {
+        display: flex; gap: 12px; align-items: center; margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .usr-wrap .wrap-buscador .label-busqueda {
+        color: #94a3b8; font-size: 0.82rem; font-weight: 700;
+        text-transform: uppercase; margin: 0;
+    }
+
+    .usr-wrap .select2-container--default .select2-selection--single {
+        background-color: #061421;
+        border: 1px solid rgba(8,52,102,0.4);
+        color: #e2e8f0; height: 38px;
+        border-radius: 0.4rem;
+    }
+    .usr-wrap .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #e2e8f0; line-height: 38px; padding-left: 12px;
+    }
+    .usr-wrap .select2-container--default .select2-selection--single .select2-selection__arrow { height: 38px; }
+    .usr-wrap .select2-container--default .select2-selection--single .select2-selection__placeholder { color: #64748b; }
+    .select2-dropdown {
+        background-color: #0a1d2e !important;
+        border: 1px solid rgba(8,52,102,0.4) !important;
+        color: #e2e8f0 !important;
+    }
+    .select2-search--dropdown .select2-search__field {
+        background-color: #061421 !important; color: #e2e8f0 !important;
+        border: 1px solid rgba(8,52,102,0.4) !important;
+    }
+    .select2-results__option { color: #e2e8f0 !important; }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #083466 !important; color: #fff !important;
+    }
+    .select2-container--default .select2-results__option[aria-selected=true] {
+        background-color: rgba(8,52,102,0.4) !important;
+    }
 </style>
 
 <div class="usr-wrap container-fluid mt-4">
@@ -89,7 +138,22 @@
         </div>
     </div>
 
-    <!-- Tabla -->
+    <div class="wrap-buscador">
+        <span class="label-busqueda">Buscar:</span>
+        <select id="buscador_usuario" style="width: 320px;">
+            <option></option>
+        </select>
+
+        <div class="toggle-estado">
+            <button type="button" id="btn_activos"   class="active activo">Activos</button>
+            <button type="button" id="btn_inactivos" class="inactivo">Inactivos</button>
+        </div>
+
+        <button type="button" id="btn_limpiar" class="btn btn-sm btn-secondary" style="margin-left:auto;">
+            Limpiar filtro
+        </button>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="card border">
