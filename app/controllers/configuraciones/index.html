@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>404 - Pagina no encontrada | Ticket UCAD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/fonts/inter/inter.css">
+    <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/fontawesome/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: #061421;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 32px;
+            border-bottom: 1px solid rgba(8,52,102,0.3);
+        }
+        .header img {
+            width: 38px;
+            height: 38px;
+        }
+        .header .titulo {
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: 0.05em;
+        }
+        .header .subtitulo {
+            display: block;
+            color: #4d9fff;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+        }
+
+        /* Nave decorativa de fondo (sin animacion) */
+        .nave-fondo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .nave-body {
+            width: 360px;
+            height: 110px;
+            background: linear-gradient(180deg, #4d9fff 0%, #083466 70%, #061421 100%);
+            border-radius: 50%;
+            position: relative;
+        }
+        .nave-dome {
+            width: 200px;
+            height: 130px;
+            background: radial-gradient(ellipse at 50% 40%, #93c5fd 0%, #4d9fff 50%, #083466 100%);
+            border-radius: 50% 50% 30% 30%;
+            position: absolute;
+            top: -90px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .nave-luz {
+            position: absolute;
+            bottom: 20px;
+            width: 18px;
+            height: 18px;
+            background: #ec5b13;
+            border-radius: 50%;
+        }
+        .nave-luz:nth-child(1) { left: 50px; }
+        .nave-luz:nth-child(2) { left: 110px; }
+        .nave-luz:nth-child(3) { left: 170px; }
+        .nave-luz:nth-child(4) { left: 230px; }
+        .nave-luz:nth-child(5) { left: 290px; }
+
+        .contenido {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px;
+            min-height: calc(100vh - 100px);
+        }
+
+        .codigo {
+            font-size: 6rem;
+            font-weight: 900;
+            color: #4d9fff;
+            line-height: 1;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        .titulo-error {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .descripcion {
+            color: #94a3b8;
+            font-size: 1rem;
+            max-width: 480px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: #083466;
+            color: #fff;
+            border: 1px solid rgba(77,159,255,0.3);
+        }
+        .btn-primary:hover {
+            background: #0a4a8a;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid rgba(148,163,184,0.3);
+        }
+        .btn-ghost:hover {
+            color: #fff;
+            border-color: #4d9fff;
+        }
+
+        @media (max-width: 600px) {
+            .codigo { font-size: 4rem; }
+            .titulo-error { font-size: 1.4rem; }
+            .descripcion { font-size: 0.9rem; padding: 0 16px; }
+            .nave-body { width: 240px; height: 75px; }
+            .nave-dome { width: 130px; height: 85px; top: -60px; }
+            .nave-luz { width: 12px; height: 12px; }
+            .nave-luz:nth-child(1) { left: 30px; }
+            .nave-luz:nth-child(2) { left: 75px; }
+            .nave-luz:nth-child(3) { left: 115px; }
+            .nave-luz:nth-child(4) { left: 155px; }
+            .nave-luz:nth-child(5) { left: 195px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <img src="/TICKETUCAD/media/img/logo.png" alt="UCAD">
+    <div>
+        <div class="titulo">TICKET UCAD</div>
+        <span class="subtitulo">SOPORTE IT</span>
+    </div>
+</div>
+
+<div class="nave-fondo">
+    <div class="nave-dome"></div>
+    <div class="nave-body">
+        <div class="nave-luz"></div>
+        <div class="nave-luz"></div>
+        <div class="nave-luz"></div>
+        <div class="nave-luz"></div>
+        <div class="nave-luz"></div>
+    </div>
+</div>
+
+<div class="contenido">
+    <div class="codigo">404</div>
+    <h1 class="titulo-error">Pagina no encontrada</h1>
+    <p class="descripcion">
+        La pagina que buscas no existe o fue movida.
+        Por favor, regresa al inicio o vuelve a la pagina anterior.
+    </p>
+    <div class="acciones">
+        <a href="/TICKETUCAD/inicio-sesion" class="btn btn-primary">
+            <i class="fas fa-home"></i> Volver al inicio
+        </a>
+        <a href="javascript:history.back()" class="btn btn-ghost">
+            <i class="fas fa-arrow-left"></i> Pagina anterior
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

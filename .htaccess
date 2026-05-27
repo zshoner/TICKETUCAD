@@ -1,6 +1,12 @@
 RewriteEngine On
 RewriteBase /TICKETUCAD/
 
+# Pagina 404 personalizada (tematica alienigena)
+ErrorDocument 404 /TICKETUCAD/app/views/errors/404.html
+
+# Ocultar version de Apache en headers (seguridad)
+ServerSignature Off
+
 # Redirigir raíz al login
 RewriteRule ^$ inicio-sesion [R=302,L]
 
