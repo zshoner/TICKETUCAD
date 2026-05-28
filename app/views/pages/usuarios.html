@@ -2,6 +2,25 @@
 <style>
     .usr-wrap h2  { color: #fff; font-weight: 800; }
     .usr-wrap p   { color: #93c5fd; }
+
+    /* Subtitulo con mas contraste que .text-muted */
+    .usr-wrap .page-subtitle {
+        color: #94a3b8;
+        font-size: 0.92rem;
+        font-weight: 500;
+    }
+
+    /* Linea separadora con gradiente azul sutil */
+    .usr-wrap .divider-azul {
+        height: 1px;
+        border: none;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(77,159,255,0.4) 20%,
+            rgba(77,159,255,0.4) 80%,
+            transparent 100%);
+        margin: 0 0 24px 0;
+    }
     .usr-wrap #lbl_total { color: #4d9fff; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.03em; }
 
     /* Inputs */
@@ -37,13 +56,77 @@
     .usr-wrap .btn-outline-warning { border-color: #ec5b13; color: #ec5b13; }
     .usr-wrap .btn-outline-danger  { border-color: #ef4444; color: #f87171; }
 
-    /* Modal */
-    .usr-wrap .modal-content { background-color: #0a1d2e; border: 1px solid rgba(8,52,102,0.3); color: #e2e8f0; }
-    .usr-wrap .modal-header  { border-bottom: 1px solid rgba(8,52,102,0.3); }
-    .usr-wrap .modal-footer  { border-top: 1px solid rgba(8,52,102,0.3); }
-    .usr-wrap .modal-title   { color: #f1f5f9; }
-    .usr-wrap .close { color: #94a3b8; }
-    .usr-wrap .modal label   { color: #94a3b8; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; }
+    /* Modal — sin .usr-wrap porque Bootstrap renderiza el modal en el body */
+    #modal_crear .modal-content,
+    #modal_editar .modal-content {
+        background-color: #0a1d2e;
+        border: 1px solid rgba(8,52,102,0.3);
+        color: #e2e8f0;
+    }
+    #modal_crear .modal-header,
+    #modal_editar .modal-header {
+        border-bottom: 1px solid rgba(8,52,102,0.3);
+    }
+    #modal_crear .modal-footer,
+    #modal_editar .modal-footer {
+        border-top: 1px solid rgba(8,52,102,0.3);
+    }
+    #modal_crear .modal-title,
+    #modal_editar .modal-title {
+        color: #f1f5f9;
+        font-weight: 700;
+    }
+    #modal_crear .close,
+    #modal_editar .close {
+        color: #94a3b8;
+        text-shadow: none;
+        opacity: 0.7;
+    }
+    #modal_crear .close:hover,
+    #modal_editar .close:hover {
+        color: #fff;
+        opacity: 1;
+    }
+    #modal_crear label,
+    #modal_editar label {
+        color: #94a3b8;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+    }
+    /* Inputs dentro del modal */
+    #modal_crear .form-control,
+    #modal_editar .form-control {
+        background-color: #061421;
+        border-color: rgba(8,52,102,0.4);
+        color: #e2e8f0;
+    }
+    #modal_crear .form-control::placeholder,
+    #modal_editar .form-control::placeholder {
+        color: #64748b;
+    }
+    #modal_crear .form-control:focus,
+    #modal_editar .form-control:focus {
+        background-color: #061421;
+        border-color: #4d9fff;
+        color: #e2e8f0;
+        box-shadow: 0 0 0 2px rgba(77,159,255,0.2);
+    }
+    /* Input-group prepend (los iconos a la izquierda) */
+    #modal_crear .input-group-text,
+    #modal_editar .input-group-text {
+        background-color: #061421;
+        border-color: rgba(8,52,102,0.4);
+        color: #4d9fff;
+    }
+    /* Opciones del select */
+    #modal_crear select option,
+    #modal_editar select option {
+        background-color: #0a1d2e;
+        color: #e2e8f0;
+    }
 
     /* DataTables — tema oscuro */
     .usr-wrap .dataTables_wrapper .dataTables_filter input {
@@ -129,7 +212,7 @@
     <div class="row align-items-center mb-3">
         <div class="col-md-8">
             <h2 class="font-weight-bold mb-1">Administración de Usuarios</h2>
-            <p class="text-muted mb-0">Gestiona los accesos y roles de la plataforma.</p>
+            <p class="page-subtitle mb-0">Gestiona los accesos y roles de la plataforma.</p>
         </div>
         <div class="col-md-4 text-md-right mt-2 mt-md-0">
             <button class="btn btn-primary" data-toggle="modal" data-target="#modal_crear">
@@ -137,6 +220,8 @@
             </button>
         </div>
     </div>
+    <!-- Linea separadora con gradiente azul -->
+    <hr class="divider-azul">
 
     <div class="wrap-buscador">
         <span class="label-busqueda">Buscar:</span>
@@ -185,7 +270,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="fas fa-user-plus mr-2"></i>Nuevo usuario</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <form id="form_crear" autocomplete="off">
                 <div class="modal-body">
@@ -244,7 +328,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="fas fa-edit mr-2"></i>Editar usuario</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <form id="form_editar" autocomplete="off">
                 <input type="hidden" id="editar_id"/>

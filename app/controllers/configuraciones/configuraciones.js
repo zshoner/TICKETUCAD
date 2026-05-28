@@ -15,7 +15,7 @@ $(document).ready(function () {
         abrir_editar_categoria($(this).data("id"), $(this).data("nombre"));
     });
     $(document).on("click", ".edit-est", function () {
-        abrir_editar_estado($(this).data("id"), $(this).data("nombre"), $(this).data("esfinal"));
+        abrir_editar_estado($(this).data("id"), $(this).data("nombre"));
     });
     $(document).on("click", ".edit-pri", function () {
         abrir_editar_prioridad($(this).data("id"), $(this).data("nombre"), $(this).data("nivel"));
@@ -111,8 +111,10 @@ function listar_categorias() {
         lengthChange: false,
         pageLength: 3,
         responsive: true,
+        processing: true, // Activa el indicador "Cargando..." mientras espera datos
         language: {
             search: "Buscar:",
+            processing: "Cargando...",
             info: "Mostrando _START_ a _END_ de _TOTAL_ categorías",
             infoEmpty: "Sin categorías",
             paginate: { previous: "Anterior", next: "Siguiente" },
@@ -154,8 +156,10 @@ function listar_estados() {
         lengthChange: false,
         pageLength: 3,
         responsive: true,
+        processing: true, // Activa el indicador "Cargando..." mientras espera datos
         language: {
             search: "Buscar:",
+            processing: "Cargando...",
             info: "Mostrando _START_ a _END_ de _TOTAL_ estados",
             infoEmpty: "Sin estados",
             paginate: { previous: "Anterior", next: "Siguiente" },
@@ -176,8 +180,7 @@ function listar_estados() {
             { data: "id", orderable: false, className: "text-right",
               render: function (v, t, row) {
                 return "<button class='btn btn-sm btn-outline-primary edit-est' " +
-                       "data-id='" + row.id + "' data-nombre='" + row.nombre + "' " +
-                       "data-esfinal='" + row.es_final + "'>" +
+                       "data-id='" + row.id + "' data-nombre='" + row.nombre + "'>" +
                        "<i class='fas fa-edit'></i></button>";
               }
             }
@@ -192,8 +195,7 @@ function crear_estado() {
         url: "/TICKETUCAD/app/models/configuraciones/estados/crear.php",
         method: "POST",
         data: {
-            nombre:   $("#crear_est_nombre").val(),
-            es_final: $("#crear_est_es_final").is(":checked") ? 1 : 0
+            nombre: $("#crear_est_nombre").val()
         },
         dataType: "json",
     }).done(function (response) {
@@ -210,10 +212,9 @@ function crear_estado() {
     });
 }
 
-function abrir_editar_estado(id, nombre, es_final) {
+function abrir_editar_estado(id, nombre) {
     $("#editar_est_id").val(id);
     $("#editar_est_nombre").val(nombre);
-    $("#editar_est_es_final").prop("checked", es_final == 1);
     $("#modal_editar_est").modal("show");
 }
 
@@ -222,9 +223,8 @@ function guardar_edicion_estado() {
         url: "/TICKETUCAD/app/models/configuraciones/estados/editar.php",
         method: "POST",
         data: {
-            id:       $("#editar_est_id").val(),
-            nombre:   $("#editar_est_nombre").val(),
-            es_final: $("#editar_est_es_final").is(":checked") ? 1 : 0
+            id:     $("#editar_est_id").val(),
+            nombre: $("#editar_est_nombre").val()
         },
         dataType: "json",
     }).done(function (response) {
@@ -251,8 +251,10 @@ function listar_prioridades() {
         lengthChange: false,
         pageLength: 3,
         responsive: true,
+        processing: true, // Activa el indicador "Cargando..." mientras espera datos
         language: {
             search: "Buscar:",
+            processing: "Cargando...",
             info: "Mostrando _START_ a _END_ de _TOTAL_ prioridades",
             infoEmpty: "Sin prioridades",
             paginate: { previous: "Anterior", next: "Siguiente" },

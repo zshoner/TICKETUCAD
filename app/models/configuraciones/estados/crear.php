@@ -6,8 +6,7 @@ requerirAdmin(); // Verifica que el usuario tenga rol de administrador
 require_once '../../php/conexion.php'; // Establece la conexión con la base de datos
 
 // Recibe y sanitiza los datos del formulario
-$nombre   = trim($_POST['nombre']    ?? ''); // Elimina espacios en blanco
-$es_final = intval($_POST['es_final'] ?? 0); // Convierte a entero (0 o 1)
+$nombre = trim($_POST['nombre'] ?? ''); // Elimina espacios en blanco
 
 // Valida que el nombre no esté vacío
 if (empty($nombre)) {
@@ -16,12 +15,11 @@ if (empty($nombre)) {
 }
 
 try {
-    // Escapa los valores para prevenir inyección SQL
+    // Escapa el valor para prevenir inyección SQL
     $nombre_e = mysqli_real_escape_string($conexion, $nombre);
-    $es_final = $es_final ? 1 : 0; // Garantiza que sea 0 o 1
 
-    // Construye y ejecuta la consulta de inserción
-    $sql = "INSERT INTO estados_ticket (nombre, es_final) VALUES ('$nombre_e', $es_final)";
+    // Inserta el estado (es_final queda en su default = 0)
+    $sql = "INSERT INTO estados_ticket (nombre) VALUES ('$nombre_e')";
 
     if (mysqli_query($conexion, $sql)) {
         // Datos del administrador para registrar en bitácora

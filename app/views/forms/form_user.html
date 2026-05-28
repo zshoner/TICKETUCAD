@@ -3,77 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA TICKET | UCAD</title>
-    
+    <title>Nuevo Ticket | UCAD</title>
+    <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/fonts/inter/inter.css"/>
+    <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/bootstrap-icons/css/bootstrap-icons.min.css"/>
+
     <style>
-        /* Se encapsularon los estilos usando ".form-container" al principio
-           para evitar que afecten el diseño global del panel de administración (como el buscador).
-        */
-        .form-container { 
-            font-family: Arial, sans-serif; 
-            max-width: 620px; 
-            margin: 20px auto; 
-            background: #fff; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #061421;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 30px 20px;
         }
-        .form-container .form-group { margin-bottom: 20px; }
-        .form-container label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
-        
-        .form-container input[type="text"], 
-        .form-container input[type="email"], 
-        .form-container select, 
-        .form-container textarea { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #2165bd; 
-            border-radius: 4px; 
-            box-sizing: border-box; 
+
+        .form-container {
+            max-width: 620px;
+            margin: 0 auto;
+            background: #0a1d2e;
+            padding: 32px;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(8,52,102,0.3);
         }
-        
-        .form-container textarea { resize: vertical; min-height: 120px; }
-        
-        .form-container .btn-submit { 
-            background-color: #152036; 
-            color: white; 
-            padding: 12px 20px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-size: 16px; 
-            transition: background 0.3s; 
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(8,52,102,0.3);
         }
-        
-        .form-container .btn-submit:hover { background-color: #004494; }
-        .form-container .help-text { font-size: 12px; color: #2a6dffd7; margin-top: 4px; display: block; }
+
+        .form-header img {
+            max-height: 70px;
+            margin-bottom: 14px;
+        }
+
+        .form-header h2 {
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
+            color: #94a3b8;
+            font-size: 0.88rem;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            background: #061421;
+            border: 1px solid rgba(8,52,102,0.4);
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #475569;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #4d9fff;
+            box-shadow: 0 0 0 2px rgba(77,159,255,0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .form-group select option {
+            background: #0a1d2e;
+            color: #e2e8f0;
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 6px;
+            display: block;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: #083466;
+            color: #fff;
+            border: 1px solid rgba(77,159,255,0.3);
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #0a4a8a;
+        }
+
+        .btn-submit:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
 
     <div class="form-container">
-        <div class="sidebar-header" align="center">
-            <img class="main-logo" src="media/img/logo.png" alt="Logo" style="max-height:100px; width:auto; margin-block:10px;">
-        </div>
-        <h2 align="center" style="color: #152036;">Ingresar Nuevo Ticket</h2>
-        <p style="color:#152036">Por favor, describe tu problema detalladamente para que nuestro equipo pueda ayudarte.</p>
 
-        <form action="app/models/php/procesar_ticket.php" method="POST">
+        <div class="form-header">
+            <img src="/TICKETUCAD/media/img/logo.png" alt="UCAD">
+            <h2>Ingresar Nuevo Ticket</h2>
+            <p>Describe tu problema para que nuestro equipo pueda ayudarte.</p>
+        </div>
+
+        <form action="/TICKETUCAD/app/models/php/procesar_ticket.php" method="POST">
 
             <div class="form-group">
-                <label for="titulo">Título del problema resumido:</label>
-                <input type="text" id="titulo" name="titulo" required 
+                <label for="titulo">Titulo del problema</label>
+                <input type="text" id="titulo" name="titulo" required
                        placeholder="Ej. Problema con el teclado">
-                <span class="help-text">Breve descripción del incidente</span>
+                <span class="help-text">Breve descripcion del incidente</span>
             </div>
 
             <div class="form-group">
-                <label for="categoria_id">Categoría del problema:</label>
+                <label for="categoria_id">Categoria</label>
                 <select id="categoria_id" name="categoria_id" required>
-                    <option value="" disabled selected>-- Selecciona una categoría --</option>
-                    <option value="1">Petición administrativa</option>
-                    <option value="2">Instalación de software</option>
+                    <option value="" disabled selected>-- Selecciona una categoria --</option>
+                    <option value="1">Peticion administrativa</option>
+                    <option value="2">Instalacion de software</option>
                     <option value="3">Problema de hardware</option>
                     <option value="4">Problema de software</option>
                     <option value="5">Usuario que no puede trabajar</option>
@@ -81,7 +166,7 @@
             </div>
 
             <div class="form-group">
-                <label for="prioridad_id">Nivel de prioridad:</label>
+                <label for="prioridad_id">Nivel de prioridad</label>
                 <select id="prioridad_id" name="prioridad_id" required>
                     <option value="" disabled selected>-- Selecciona la prioridad --</option>
                     <option value="1">Baja (Puede esperar)</option>
@@ -91,16 +176,16 @@
             </div>
 
             <div class="form-group">
-                <label for="correo">Correo electrónico:</label>
-                <input type="email" id="correo" name="correo" required 
-                       placeholder="Tu correo electrónico">
-                <span class="help-text">Te contactaremos a esta dirección</span>
+                <label for="correo">Correo electronico</label>
+                <input type="email" id="correo" name="correo" required
+                       placeholder="tu.correo@ucad.edu.sv">
+                <span class="help-text">Te contactaremos a esta direccion</span>
             </div>
 
             <div class="form-group">
-                <label for="descripcion">Descripción detallada:</label>
-                <textarea id="descripcion" name="descripcion" required 
-                          placeholder="Describe con el mayor detalle posible lo que está ocurriendo..."></textarea>
+                <label for="descripcion">Descripcion detallada</label>
+                <textarea id="descripcion" name="descripcion" required
+                          placeholder="Describe con el mayor detalle posible lo que esta ocurriendo..."></textarea>
             </div>
 
             <div class="form-group">
@@ -109,18 +194,14 @@
 
         </form>
     </div>
-    
-    <script> 
-        // Este script se encarga de deshabilitar el botón de envío después de hacer clic para evitar envíos múltiples
-        const formulario = document.querySelector('form');
 
+    <script>
+        // Deshabilita el boton al enviar para evitar envios duplicados
+        const formulario = document.querySelector('form');
         formulario.addEventListener('submit', function() {
-            const botonSubmit = document.querySelector('.btn-submit');
-            
-            botonSubmit.disabled = true;
-            botonSubmit.textContent = 'Enviando ticket...';
-            botonSubmit.style.backgroundColor = '#666'; 
-            botonSubmit.style.cursor = 'not-allowed';
+            const btn = document.querySelector('.btn-submit');
+            btn.disabled = true;
+            btn.textContent = 'Enviando ticket...';
         });
     </script>
 

@@ -5,9 +5,8 @@ require_once __DIR__ . '/../../permiso_rol/verificacion_rol.php';
 requerirAdmin();
 require_once '../../php/conexion.php';
 
-$id       = intval($_POST['id']       ?? 0);
-$nombre   = trim($_POST['nombre']     ?? '');
-$es_final = intval($_POST['es_final'] ?? 0);
+$id     = intval($_POST['id']     ?? 0);
+$nombre = trim($_POST['nombre']   ?? '');
 
 if (!$id || empty($nombre)) {
     echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
@@ -15,35 +14,26 @@ if (!$id || empty($nombre)) {
 }
 
 try {
-    // Guardamos cómo estaba antes de editar
-    $res_antes    = mysqli_query($conexion, "SELECT nombre, es_final FROM estados_ticket WHERE id=$id");
+    // Guardamos cómo estaba antes de editar (solo el nombre)
+    $res_antes    = mysqli_query($conexion, "SELECT nombre FROM estados_ticket WHERE id=$id");
     $row_antes    = mysqli_fetch_assoc($res_antes);
-    $nom_anterior = $row_antes['nombre']   ?? '';
-    $fin_anterior = $row_antes['es_final'] ?? 0;
+    $nom_anterior = $row_antes['nombre'] ?? '';
 
     $nombre_e = mysqli_real_escape_string($conexion, $nombre);
-    $es_final = $es_final ? 1 : 0;
 
-    $sql = "UPDATE estados_ticket SET nombre='$nombre_e', es_final=$es_final WHERE id=$id";
+    $sql = "UPDATE estados_ticket SET nombre='$nombre_e' WHERE id=$id";
 
     if (mysqli_query($conexion, $sql)) {
         $id_admin   = $_SESSION['usuario_id'] ?? 'NULL';
         $admin_user = $_SESSION['usuario']    ?? 'sistema';
         $ip         = $_SERVER['REMOTE_ADDR'] ?? '';
 
-        // Solo registra lo que realmente cambió
+        // Registra en bitácora solo si el nombre cambió
         if ($nom_anterior !== $nombre) {
             $antes_e = mysqli_real_escape_string($conexion, $nom_anterior);
             mysqli_query($conexion, "CALL sp_registrar_accion(
                 $id_admin, '$admin_user', '$ip',
                 'UPDATE', 'estados_ticket', 'nombre', '$antes_e', '$nombre_e'
-            )");
-        }
-
-        if ($fin_anterior != $es_final) {
-            mysqli_query($conexion, "CALL sp_registrar_accion(
-                $id_admin, '$admin_user', '$ip',
-                'UPDATE', 'estados_ticket', 'es_final', '$fin_anterior', '$es_final'
             )");
         }
 
