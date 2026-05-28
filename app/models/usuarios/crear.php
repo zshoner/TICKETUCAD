@@ -24,7 +24,13 @@ try {
     }
 
     $password_temporal = 'UCAD' . rand(1000, 9999);
-    $hash = password_hash($password_temporal, PASSWORD_BCRYPT);
+
+    // Doble hash: SHA-256 primero, despues bcrypt
+    // Razon: el cliente (login.js) envia el password ya hasheado con SHA-256,
+    // por lo que la BD debe guardar bcrypt(SHA-256(password)) y NO bcrypt(password)
+    // Si no se aplica este doble hash, el usuario nuevo no podra loguearse porque
+    // el server estaria comparando sha256(temp) contra bcrypt(temp), que no coinciden.
+    $hash = password_hash(hash('sha256', $password_temporal), PASSWORD_BCRYPT);
 
     $nombre_e   = mysqli_real_escape_string($conexion, $nombre);
     $correo_e   = mysqli_real_escape_string($conexion, $correo);

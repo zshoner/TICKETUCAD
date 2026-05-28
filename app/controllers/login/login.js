@@ -1,3 +1,10 @@
+async function sha256(text) {
+    const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -19,7 +26,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     const formData = new FormData();
     formData.append('usuario', usuario);
-    formData.append('password', password);
+    formData.append('password', await sha256(password));
 
     try {
         const res  = await fetch('/TICKETUCAD/app/models/login/login.php', {

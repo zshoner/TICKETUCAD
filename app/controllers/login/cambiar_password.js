@@ -1,6 +1,13 @@
+async function sha256(text) {
+    const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
 $(function () {
 
-    $("#formCambiarPassword").on("submit", function (e) {
+    $("#formCambiarPassword").on("submit", async function (e) {
         e.preventDefault();
 
         let nueva     = $("#nueva_password").val();
@@ -29,7 +36,7 @@ $(function () {
         $.ajax({
             url: "/TICKETUCAD/app/models/login/cambiar_password.php",
             method: "POST",
-            data: { nueva_password: nueva },
+            data: { nueva_password: await sha256(nueva) },
             dataType: "json",
         }).done(function (response) {
             if (response.success) {

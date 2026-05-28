@@ -1,4 +1,13 @@
 $.fn.dataTable.ext.errMode = 'none'; // Suprime el popup nativo de error de DataTables
+
+
+async function sha256(text) {// Convierte una contraseña en un codigo ilegible antes de enviar al servido
+    const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));// Encripta el texto con SHA-256
+    return Array.from(new Uint8Array(buffer))// Convierte esos datos a una lista de numeros
+        .map(b => b.toString(16).padStart(2, '0'))// Pasa cada numero a hexadecimal con 2 digitos
+        .join('');// Junta todo en un texto de 64 caracteres
+}
+
 $(function () {
     // Estado actual del toggle: 'activo' o 'inactivo'
     let estadoActual = 'activo';
@@ -283,7 +292,13 @@ function abrir_editar(id, nombre, correo, usuario, rol_id){
     $("#modal_editar").modal("show");
 }
 
-function guardar_edicion(){
+// Se marca como async porque adentro se usa await sha256()
+async function guardar_edicion(){
+    // Si el admin escribio una password nueva, la hasheamos con SHA-256 antes de enviar
+    // Si dejo el campo vacio (no quiere cambiarla), mandamos string vacio como antes
+    let passPlano = $("#editar_password").val();
+    let passHash  = passPlano !== '' ? await sha256(passPlano) : '';
+
     $.ajax({
         url: "/TICKETUCAD/app/models/usuarios/editar.php",
         method: "POST",
@@ -292,7 +307,7 @@ function guardar_edicion(){
             nombre:   $("#editar_nombre").val(),
             correo:   $("#editar_correo").val(),
             usuario:  $("#editar_usuario").val(),
-            password: $("#editar_password").val(),
+            password: passHash, // Va el hash SHA-256, no el texto plano
             rol_id:   $("#editar_rol").val(),
         },
         dataType: "json",
