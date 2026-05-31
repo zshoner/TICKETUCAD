@@ -443,7 +443,6 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
                 <label class="mb-0 mr-3 small font-weight-bold text-muted">FORMATO:</label>
                 <select name="formato_export" class="form-control form-control-sm form-control-custom" style="width: 140px;">
                     <option value="pdf">Documento PDF</option>
-                    <option value="excel">Hoja de Excel</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-export ml-auto">
