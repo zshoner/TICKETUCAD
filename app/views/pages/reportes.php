@@ -1,7 +1,3 @@
-<?php
-require_once __DIR__ . "/../../models/reportes/auth_admin.php";
-?>
-
 <style>
     /* ── Estilos de integración con el Dashboard ── */
     .header-banner { 
@@ -205,32 +201,40 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
     }
 
     /* =========================================================================
-       ESTILOS PERSONALIZADOS PARA LA PAGINACIÓN (TICKET UCAD)
+       NUEVOS ESTILOS OPTIMIZADOS PARA LOS BOTONES DE PAGINACIÓN (TICKET UCAD)
        ========================================================================= */
-    #contenedorPaginacion .page-link {
-        background-color: #1f2937 !important; /* Gris Azulado Oscuro (Mismo fondo de tus cards) */
-        border-color: rgba(255, 255, 255, 0.05) !important; /* Borde sutil */
-        color: #94a3b8 !important; /* Texto gris atenuado */
+    .btn-custom-nav {
+        background-color: #2563eb !important; /* Azul Cobalto Institucional */
+        color: #ffffff !important;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 6px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         transition: all 0.2s ease;
+        cursor: pointer;
     }
 
-    #contenedorPaginacion .page-link:hover {
-        background-color: #374151 !important; /* Un gris un poco más claro */
-        color: #ffffff !important; /* El texto se ilumina en blanco */
+    .btn-custom-nav:hover:not(:disabled) {
+        background-color: #1d4ed8 !important; /* Azul un toque más oscuro al hacer hover */
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
     }
 
-    #contenedorPaginacion .page-item.active .page-link {
-        background-color: #2563eb !important; /* Azul Cobalto institucional */
-        border-color: #2563eb !important;
-        color: #ffffff !important; /* Texto blanco brillante */
-        box-shadow: 0 0 10px rgba(37, 99, 235, 0.3) !important; /* Destello azul suave */
+    .btn-custom-nav:active:not(:disabled) {
+        transform: translateY(1px);
     }
 
-    #contenedorPaginacion .page-item.disabled .page-link {
-        background-color: #111827 !important; /* Fondo del contenedor general */
-        border-color: rgba(255, 255, 255, 0.02) !important;
-        color: #4b5563 !important; /* Texto bien apagado */
+    /* Estado inhabilitado (Se funde de forma elegante con tu fondo general #111827) */
+    .btn-custom-nav:disabled {
+        background-color: #111827 !important; 
+        color: #4b5563 !important; /* Gris oscuro apagado */
+        border-color: rgba(255, 255, 255, 0.03) !important;
+        box-shadow: none;
         cursor: not-allowed;
+        opacity: 0.6;
     }
 
     /* =========================================================================
@@ -272,7 +276,7 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
     }
 
     /* =========================================================================
-       NUEVA CORRECCIÓN: VISIBILIDAD MÁXIMA PARA SELECT2 (CERRADO)
+       VISIBILIDAD MÁXIMA PARA SELECT2 (CERRADO)
        ========================================================================= */
     /* 1. Marco contenedor base cuando está inactivo */
     .select2-container--bootstrap4 .select2-selection--single {
@@ -335,11 +339,11 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
                     <div class="row">
                         <div class="col-6">
                             <label class="small text-muted">Desde</label>
-                            <input type="date" id="fecha_inicio" class="form-control form-control-custom" value="2026-04-01">
+                            <input type="date" id="fecha_inicio" class="form-control form-control-custom">
                         </div>
                         <div class="col-6">
                             <label class="small text-muted">Hasta</label>
-                            <input type="date" id="fecha_fin" class="form-control form-control-custom" value="2026-04-30">
+                            <input type="date" id="fecha_fin" class="form-control form-control-custom">
                         </div>
                     </div>
                 </div>
@@ -424,10 +428,16 @@ require_once __DIR__ . "/../../models/reportes/auth_admin.php";
             <div class="small text-muted my-1">
                 Mostrando <span id="paginacionInfo" class="font-weight-bold text-white">0 a 0</span> de <span id="paginacionTotal" class="font-weight-bold text-white">0</span> registros
             </div>
-            <nav class="my-1">
-                <ul class="pagination pagination-sm mb-0" id="contenedorPaginacion">
-                    </ul>
-            </nav>
+            
+            <div class="d-flex align-items-center my-1" style="gap: 15px;">
+                <button type="button" id="btnPaginaAnterior" class="btn btn-custom-nav" disabled>Anterior</button>
+                
+                <span class="text-white font-weight-bold" style="font-size: 0.88rem; font-family: 'Segoe UI', sans-serif; min-width: 90px; text-align: center;">
+                    Página <span id="paginaActualTxt">1</span> de <span id="totalPaginasTxt">1</span>
+                </span>
+                
+                <button type="button" id="btnPaginaSiguiente" class="btn btn-custom-nav" disabled>Siguiente</button>
+            </div>
         </div>
     </div>
 
