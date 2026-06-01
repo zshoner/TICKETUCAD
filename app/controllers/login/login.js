@@ -43,6 +43,12 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                 sessionStorage.setItem('ucad_id_rol', String(data.rol_id));
             }
 
+            if (Number(data.rol_id) === 3) {
+                sessionStorage.setItem('ucad_view', 'form_user');
+            } else {
+                sessionStorage.removeItem('ucad_view');
+            }
+
             Swal.fire({
                 icon: 'success',
                 title: `¡Bienvenido, ${data.nombre}!`,

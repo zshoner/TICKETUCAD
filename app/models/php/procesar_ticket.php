@@ -1,6 +1,7 @@
 <?php
 // 1. Incluir el archivo de conexión
 require 'conexion.php';
+require_once __DIR__ . '/../notificacion/procesar.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
@@ -62,6 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':asignado_a' => $siguiente_agente,  // <--- Aquí guardamos el agente que calculamos arriba
             ':correo' => $correo
         ]);
+
+        $ticket_id = (int) $pdo->lastInsertId();
+        crearNotificacionesNuevoTicket($pdo, $ticket_id, $titulo, (int) $siguiente_agente);
 
         // Mostrar mensaje de éxito
         echo "<body style='background-color: #152036; margin: 0; padding: 20px; justify-content: center; align-items: center;'>";

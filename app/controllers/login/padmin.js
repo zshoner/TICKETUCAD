@@ -12,16 +12,46 @@ async function cargarSesionUsuario() {
         if (data.autenticado) {
             sessionStorage.setItem('ucad_nombre', data.nombre);
             sessionStorage.setItem('ucad_rol',    data.rol);
-            if (data.id_rol != null) {
-                sessionStorage.setItem('ucad_id_rol', String(data.id_rol));
+
+            const idRol = data.id_rol ?? data.rol_id ?? null;
+            if (idRol != null) {
+                sessionStorage.setItem('ucad_id_rol', String(idRol));
             }
-            return true;
+
+            if (data.usuario_id != null) {
+                sessionStorage.setItem('ucad_usuario_id', String(data.usuario_id));
+            }
+
+            return {
+                ok: true,
+                rol: data.rol,
+                id_rol: idRol,
+            };
         }
     } catch (e) {
         // Si falla el fetch, usar lo que haya en sessionStorage
     }
 
-    return !!sessionStorage.getItem('ucad_nombre') && !!sessionStorage.getItem('ucad_rol');
+    const nombre = sessionStorage.getItem('ucad_nombre');
+    const rol    = sessionStorage.getItem('ucad_rol');
+    const idRol  = sessionStorage.getItem('ucad_id_rol');
+
+    if (nombre && rol) {
+        return {
+            ok: true,
+            rol,
+            id_rol: idRol != null ? parseInt(idRol, 10) : null,
+        };
+    }
+
+    return { ok: false };
+}
+
+function obtenerIdRolSesion() {
+    const idRol = sessionStorage.getItem('ucad_id_rol');
+    if (idRol == null || idRol === '') return null;
+    const parsed = parseInt(idRol, 10);
+    return Number.isFinite(parsed) ? parsed : null;
 }
 
 function obtenerRolActual() {
@@ -55,26 +85,40 @@ function alertaAccesoDenegado() {
 }
 
 // ── Arranque: sesión → menú por rol → vista inicial ───────────────────────────
-cargarSesionUsuario().then((autenticado) => {
-    if (!autenticado) {
+cargarSesionUsuario().then((sesion) => {
+    if (!sesion.ok) {
         window.location.href = '/TICKETUCAD/inicio-sesion';
         return;
     }
 
     pintarUsuarioSidebar();
 
-    const rol = obtenerRolActual();
+    const rol   = sesion.rol || obtenerRolActual();
+    const idRol = sesion.id_rol ?? obtenerIdRolSesion();
+
     if (typeof aplicarMenuPorRol === 'function') {
-        aplicarMenuPorRol(rol);
+        aplicarMenuPorRol(rol, idRol);
     }
 
     const params = new URLSearchParams(window.location.search);
     const viewFromQuery = params.get('view');
     const viewFromStorage = sessionStorage.getItem('ucad_view');
-    let view = (viewFromQuery && viewMap[viewFromQuery]) ? viewFromQuery : (viewFromStorage || 'inicio');
+    let view = (viewFromQuery && viewMap[viewFromQuery]) ? viewFromQuery : viewFromStorage;
 
-    if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view)) {
-        view = typeof vistaPorDefectoSegura === 'function' ? vistaPorDefectoSegura(rol) : 'inicio';
+    if (!view) {
+        view = typeof vistaPorDefectoSegura === 'function'
+            ? vistaPorDefectoSegura(rol, idRol)
+            : 'inicio';
+    }
+
+    if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view, idRol)) {
+        view = typeof vistaPorDefectoSegura === 'function'
+            ? vistaPorDefectoSegura(rol, idRol)
+            : 'inicio';
+    }
+
+    if (typeof esUsuarioFinalMenu === 'function' && esUsuarioFinalMenu(rol, idRol)) {
+        view = 'form_user';
     }
 
     if (window.location.search.includes('view=')) {
@@ -128,11 +172,18 @@ const scriptMap = {
 };
 
 function cargarVista(view) {
-    const rol = obtenerRolActual();
+    const rol   = obtenerRolActual();
+    const idRol = obtenerIdRolSesion();
 
-    if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view)) {
+    if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view, idRol)) {
         alertaAccesoDenegado();
-        view = typeof vistaPorDefectoSegura === 'function' ? vistaPorDefectoSegura(rol) : 'inicio';
+        view = typeof vistaPorDefectoSegura === 'function'
+            ? vistaPorDefectoSegura(rol, idRol)
+            : 'inicio';
+    }
+
+    if (typeof esUsuarioFinalMenu === 'function' && esUsuarioFinalMenu(rol, idRol)) {
+        view = 'form_user';
     }
 
     if (view === 'dashboard') {
@@ -164,9 +215,10 @@ document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function(e) {
         e.preventDefault();
         const view = this.dataset.view;
-        const rol = obtenerRolActual();
+        const rol   = obtenerRolActual();
+        const idRol = obtenerIdRolSesion();
 
-        if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view)) {
+        if (typeof puedeAccederVistaMenu === 'function' && !puedeAccederVistaMenu(rol, view, idRol)) {
             alertaAccesoDenegado();
             return;
         }

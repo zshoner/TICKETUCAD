@@ -186,6 +186,13 @@
         }
         @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } .main-content { padding: 16px; } }
 
+        /* Usuario Final: solo Crear Ticket */
+        body.usuario-final .nav-item[data-view]:not([data-view="form_user"]) { display: none !important; }
+        body.usuario-final .nav-section-gestion { display: none !important; }
+        body.usuario-final #header-search,
+        body.usuario-final #btn-notificaciones,
+        body.usuario-final #btn-mensajes { display: none !important; }
+
         /* === Estilos vista usuarios === */
         .usr-wrap .table tbody tr td { background-color: #061421 !important; color: #e2e8f0 !important; }
         .usr-wrap .table tbody tr:nth-child(even) td { background-color: #0a1d2e !important; }
@@ -206,7 +213,7 @@
 
     <nav class="sidebar-nav">
         <div class="nav-section">Principal</div>
-        <a href="#" class="nav-item active" data-view="inicio">
+        <a href="#" class="nav-item" data-view="inicio">
             <i class="bi bi-house-fill"></i> Inicio
         </a>
         <a href="#" class="nav-item" data-view="tickets">
@@ -249,17 +256,17 @@
 <header class="main-header">
     <button class="btn-toggle" id="btnToggle"><i class="bi bi-list"></i></button>
 
-    <div class="header-search">
+    <div class="header-search" id="header-search">
         <i class="bi bi-search"></i>
         <input type="text" placeholder="Buscar tickets, usuarios...">
     </div>
 
     <div class="header-right">
-        <button class="header-icon-btn" title="Notificaciones">
+        <button class="header-icon-btn" id="btn-notificaciones" title="Notificaciones">
             <i class="bi bi-bell-fill"></i>
-            <span class="badge-dot"></span>
+            <span class="badge-dot" id="badge-notificaciones" style="display:none;"></span>
         </button>
-        <button class="header-icon-btn" title="Mensajes">
+        <button class="header-icon-btn" id="btn-mensajes" title="Mensajes">
             <i class="bi bi-chat-dots-fill"></i>
         </button>
         <button class="header-icon-btn" title="Pantalla completa" id="btnFullscreen">
@@ -285,9 +292,10 @@
 <script src="/TICKETUCAD/recursos/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/TICKETUCAD/recursos/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="/TICKETUCAD/app/controllers/menu_rol/menu_rol.js"></script>
-<script src="/TICKETUCAD/app/controllers/login/padmin.js"></script>
+<script src="/TICKETUCAD/app/controllers/menu_rol/menu_rol.js?v=20260531"></script>
+<script src="/TICKETUCAD/app/controllers/login/padmin.js?v=20260531"></script>
 <script src="/TICKETUCAD/app/controllers/tickets/tickets.js"></script>
+<script src="/TICKETUCAD/app/controllers/toast/toast_ticket.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@5.3.6/dist/apexcharts.min.js"></script>
 
 <script src="/TICKETUCAD/app/controllers/dashboard/dashboard_controller.js"></script>

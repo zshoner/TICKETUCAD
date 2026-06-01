@@ -1,10 +1,16 @@
 <?php
 
+define('ROL_ID_USUARIO_FINAL', 3);
+
 /**
  * Configuración central de vistas permitidas por rol.
  */
-function normalizarRol($rol)
+function normalizarRol($rol, $rolId = null)
 {
+    if ((int) $rolId === ROL_ID_USUARIO_FINAL) {
+        return 'usuario_final';
+    }
+
     $r = strtolower(trim((string) $rol));
     $r = str_replace(
         ['á', 'é', 'í', 'ó', 'ú', 'ñ'],
@@ -19,7 +25,25 @@ function normalizarRol($rol)
         return 'admin';
     }
 
+    if (strpos($r, 'usuario final') !== false || $r === 'usuario final') {
+        return 'usuario_final';
+    }
+
     return 'agente';
+}
+
+function obtenerRolIdSesion()
+{
+    if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['rol_id'])) {
+        return (int) $_SESSION['rol_id'];
+    }
+
+    return null;
+}
+
+function vistasUsuarioFinal()
+{
+    return ['form_user'];
 }
 
 function vistasAgente()
@@ -32,9 +56,23 @@ function vistasAdmin()
     return array_merge(vistasAgente(), ['usuarios', 'reportes', 'configuracion']);
 }
 
-function vistasPorRol($rol)
+function vistasPorRol($rol, $rolId = null)
 {
-    return normalizarRol($rol) === 'admin' ? vistasAdmin() : vistasAgente();
+    if ($rolId === null) {
+        $rolId = obtenerRolIdSesion();
+    }
+
+    $tipo = normalizarRol($rol, $rolId);
+
+    if ($tipo === 'admin') {
+        return vistasAdmin();
+    }
+
+    if ($tipo === 'usuario_final') {
+        return vistasUsuarioFinal();
+    }
+
+    return vistasAgente();
 }
 
 function puedeAccederVista($rol, $vista)
@@ -44,5 +82,10 @@ function puedeAccederVista($rol, $vista)
 
 function esAdmin($rol)
 {
-    return normalizarRol($rol) === 'admin';
+    return normalizarRol($rol, obtenerRolIdSesion()) === 'admin';
+}
+
+function esUsuarioFinal($rol)
+{
+    return normalizarRol($rol, obtenerRolIdSesion()) === 'usuario_final';
 }
