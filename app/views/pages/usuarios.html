@@ -56,7 +56,7 @@
     .usr-wrap .btn-outline-warning { border-color: #ec5b13; color: #ec5b13; }
     .usr-wrap .btn-outline-danger  { border-color: #ef4444; color: #f87171; }
 
-    /* Modal — sin .usr-wrap porque Bootstrap renderiza el modal en el body */
+    /* Modal  */
     #modal_crear .modal-content,
     #modal_editar .modal-content {
         background-color: #0a1d2e;
@@ -206,9 +206,10 @@
     }
 </style>
 
+<!-- Contenedor principal de la vista -->
 <div class="usr-wrap container-fluid mt-4">
 
-    <!-- Page Header -->
+    <!-- cabecera titulo + boton para agregar usuario -->
     <div class="row align-items-center mb-3">
         <div class="col-md-8">
             <h2 class="font-weight-bold mb-1">Administración de Usuarios</h2>
@@ -220,11 +221,13 @@
             </button>
         </div>
     </div>
-    <!-- Linea separadora con gradiente azul -->
+
     <hr class="divider-azul">
 
+    <!-- Barra de busqueda con Select2 + toggle activos/inactivos -->
     <div class="wrap-buscador">
         <span class="label-busqueda">Buscar:</span>
+
         <select id="buscador_usuario" style="width: 320px;">
             <option></option>
         </select>
@@ -239,6 +242,7 @@
         </button>
     </div>
 
+    <!-- Tabla de usuarios DataTable carga desde mostrar.php -->
     <div class="row">
         <div class="col-12">
             <div class="card border">
@@ -264,7 +268,7 @@
 
 </div>
 
-<!-- Modal Crear Usuario -->
+<!-- Modal para crear usuario  -->
 <div class="modal fade" id="modal_crear" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -322,7 +326,7 @@
     </div>
 </div>
 
-<!-- Modal Editar Usuario -->
+<!-- Modal para editar usuario  -->
 <div class="modal fade" id="modal_editar" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -360,7 +364,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Nueva contraseña <small class="text-muted">(dejar vacío para no cambiar)</small></label>
+                        <label>Nueva contraseña <small class="text-muted"></small></label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text"><i class="fas fa-lock"></i></div>

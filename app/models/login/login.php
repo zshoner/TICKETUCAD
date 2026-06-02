@@ -63,6 +63,20 @@ try {
     $_SESSION['rol']        = $user['rol'];
     $_SESSION['rol_id']     = $user['rol_id'];
 
+    // ── Registrar inicio de sesión en bitácora ──
+    $ip        = $_SERVER['REMOTE_ADDR'] ?? '';
+    $usuario_e = $pdo->quote($usuario);
+    $pdo->query("CALL sp_registrar_accion(
+        {$user['id']},
+        {$usuario_e},
+        '$ip',
+        'LOGIN',
+        'usuarios',
+        'sesion',
+        NULL,
+        'inicio_sesion'
+    )");
+
     echo json_encode([
         'success' => true,
         'nombre'  => $user['nombre'],

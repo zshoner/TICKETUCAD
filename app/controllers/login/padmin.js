@@ -1,9 +1,46 @@
+// ── Carga categorías y prioridades en el formulario de crear ticket ───────────
+async function cargarSelectsFormTicket() {
+    try {
+        const [resCat, resPrio] = await Promise.all([
+            fetch('/TICKETUCAD/app/models/php/obtener_categorias.php'),
+            fetch('/TICKETUCAD/app/models/php/obtener_prioridades.php')
+        ]);
+
+        const categorias  = await resCat.json();
+        const prioridades = await resPrio.json();
+
+        const selCat  = document.getElementById('categoria_id');
+        const selPrio = document.getElementById('prioridad_id');
+
+        if (selCat) {
+            categorias.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value       = c.id;
+                opt.textContent = c.nombre;
+                selCat.appendChild(opt);
+            });
+        }
+
+        if (selPrio) {
+            prioridades.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value       = p.id;
+                opt.textContent = p.nombre;
+                selPrio.appendChild(opt);
+            });
+        }
+
+    } catch (err) {
+        console.error('Error al cargar selects del formulario:', err);
+    }
+}
+
 // ── Fecha actual en el dashboard ─────────────────────────────────────────────
 const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
 const fechaEl = document.getElementById('fecha-hoy');
 if (fechaEl) fechaEl.textContent = new Date().toLocaleDateString('es-ES', opts);
 
-// ── Datos del usuario: sesión PHP → sessionStorage → sidebar ─────────────────
+// ── Datos del usuario: sesión PHP → sessionStorage → sidebar
 async function cargarSesionUsuario() {
     try {
         const res  = await fetch('/TICKETUCAD/app/models/login/sesion.php');
@@ -202,6 +239,10 @@ function cargarVista(view) {
         // Tickets: la función ya está cargada globalmente, solo la llamamos
         if (view === 'tickets' && typeof extraerTickets === 'function') {
             extraerTickets();
+        }
+        // Crear ticket: cargar categorías y prioridades desde la BD
+        if (view === 'form_user') {
+            cargarSelectsFormTicket();
         }
         // Usuarios / Configuraciones: forzar re-ejecución del JS en cada visita
         if (scriptMap[view]) {

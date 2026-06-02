@@ -246,7 +246,7 @@
                 <div class="user-name">Administrador</div>
                 <div class="user-role">Super Admin</div>
             </div>
-            <button class="btn-logout" title="Cerrar sesión" onclick="sessionStorage.removeItem('ucad_nombre'); sessionStorage.removeItem('ucad_rol'); sessionStorage.removeItem('ucad_id_rol'); sessionStorage.removeItem('ucad_view'); window.location.href='/TICKETUCAD/inicio-sesion'">
+            <button class="btn-logout" title="Cerrar sesión" onclick="fetch('/TICKETUCAD/app/models/login/logout.php',{method:'POST'}).finally(()=>{ sessionStorage.clear(); window.location.href='/TICKETUCAD/inicio-sesion'; })">
                 <i class="bi bi-box-arrow-right"></i>
             </button>
         </div>
