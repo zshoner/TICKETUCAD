@@ -331,7 +331,7 @@
         </div>
     </div>
 
-    <div id="filtrosContenedor">
+    <div id="filtrosContenedor" class="mb-4">
         <div class="row">
             <div class="col-md-4">
                 <div class="card card-custom p-4">
@@ -369,43 +369,10 @@
                             <label class="small text-muted">Estado</label>
                             <select id="sel_estado" class="form-control form-control-custom">
                                 <option value="">Todos los estados</option>
-                                <option value="Completado">Completado</option>
-                                <option value="En progreso">En progreso</option>
                             </select>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box">
-                <i class="fas fa-layer-group stat-icon text-muted"></i>
-                <span class="stat-label">Total Tickets</span>
-                <span class="stat-number text-total" id="countTotal">0</span>
-            </div>
-        </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box">
-                <i class="fas fa-check-double stat-icon text-success"></i>
-                <span class="stat-label">Resueltos</span>
-                <span class="stat-number text-success" id="countResueltos">0</span>
-            </div>
-        </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box">
-                <i class="fas fa-clock stat-icon text-warning"></i>
-                <span class="stat-label">Pendientes</span>
-                <span class="stat-number text-warning" id="countPendientes">0</span>
-            </div>
-        </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="stat-box">
-                <i class="fas fa-fire-alt stat-icon text-danger"></i>
-                <span class="stat-label">Vencidos</span>
-                <span class="stat-number text-danger" id="countVencidos">0</span>
             </div>
         </div>
     </div>
