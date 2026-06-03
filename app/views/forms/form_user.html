@@ -12,7 +12,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #061421;
+            background: #0a0f1e;
             color: #e2e8f0;
             min-height: 100vh;
             padding: 30px 20px;
@@ -21,7 +21,7 @@
         .form-container {
             max-width: 620px;
             margin: 0 auto;
-            background: #0a1d2e;
+            background: #111b33;
             padding: 32px;
             border-radius: 0.75rem;
             border: 1px solid rgba(8,52,102,0.3);
@@ -57,7 +57,7 @@
 
         .form-group label {
             display: block;
-            color: #94a3b8;
+            color: #ffffffdc;
             font-size: 0.78rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -188,14 +188,60 @@
     </div>
 
     <script>
-        // Deshabilita el boton al enviar para evitar envios duplicados
-        const formulario = document.querySelector('form');
-        formulario.addEventListener('submit', function() {
-            const btn = document.querySelector('.btn-submit');
-            btn.disabled = true;
-            btn.textContent = 'Enviando ticket...';
-        });
-    </script>
+    const formulario = document.querySelector('form');
+    
+    formulario.addEventListener('submit', async function(e) {
+        e.preventDefault(); // Evita que la página se recargue o cambie 
+
+        const btn = document.querySelector('.btn-submit');
+        btn.disabled = true;
+        btn.textContent = 'Enviando ticket...';
+
+        try {
+            // Capturar los datos del formulario 
+            const formData = new FormData(formulario);
+
+            // Enviar datos por Fetch 
+            const respuesta = await fetch('/TICKETUCAD/app/models/php/procesar_ticket.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const resultado = await respuesta.json();
+
+            if (respuesta.ok && resultado.status === 'success') {
+                // Alerta de éxito 
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Ticket creado exitosamente!',
+                    text: resultado.message,
+                    background: '#111b33',
+                    color: '#e2e8f0',
+                    confirmButtonColor: '#2563eb'
+                });
+
+                formulario.reset(); // Limpiar los campos del formulario
+            } else {
+                throw new Error(resultado.message || 'Error al procesar la solicitud.');
+            }
+
+        } catch (error) {
+            // Mostrar alerta de error
+            Swal.fire({
+                icon: 'error',
+                title: 'No se pudo crear el ticket',
+                text: error.message,
+                background: '#111b33',
+                color: '#e2e8f0',
+                confirmButtonColor: '#ef4444'
+            });
+        } finally {
+            // Restaurar el botón 
+            btn.disabled = false;
+            btn.textContent = 'Enviar Ticket';
+        }
+    });
+</script>
 
 </body>
 </html>
