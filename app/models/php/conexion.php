@@ -17,8 +17,7 @@ $conexion = @mysqli_connect($host, $username, $password, $dbname, $port);
 if ($conexion) {
     $conexion->set_charset("utf8");
 } else {
-    // No interrumpimos aquí: varios endpoints de tickets usan solo PDO.
-    // Evitamos que warnings HTML rompan respuestas JSON en el frontend.
+    // USAR SOLO PDO.
     $conexion = null;
 }
 ?>

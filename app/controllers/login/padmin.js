@@ -192,7 +192,6 @@ document.addEventListener('click', e => {
 
 // ── Carga dinámica de vistas ──────────────────────────────────────────────────
 const mainContent = document.getElementById('main-content');
-
 const viewMap = {
     inicio:       '/TICKETUCAD/app/views/pages/inicio.html',
     usuarios:     '/TICKETUCAD/app/views/pages/usuarios.html',
@@ -200,12 +199,15 @@ const viewMap = {
     configuracion:'/TICKETUCAD/app/views/pages/configuraciones.html',
     tickets:      '/TICKETUCAD/app/views/pages/tickets.html',
     form_user:    '/TICKETUCAD/app/views/forms/form_user.html',
+    dashboard:    '/TICKETUCAD/app/views/pages/dashboard.html' // <-- NUEVO
 };
 
-// Mapa: vista → archivo JS del controlador que debe re-ejecutarse cada vez
+// forzar recarga 
+
 const scriptMap = {
     usuarios:      '/TICKETUCAD/app/controllers/usuarios/usuarios.js',
     configuracion: '/TICKETUCAD/app/controllers/configuraciones/configuraciones.js',
+    dashboard:     '/TICKETUCAD/app/controllers/dashboard/dashboard_controller.js' // <-- NUEVO
 };
 
 function cargarVista(view) {
@@ -223,34 +225,27 @@ function cargarVista(view) {
         view = 'form_user';
     }
 
-    if (view === 'dashboard') {
-        if (typeof inicializarDashboard === 'function') {
-            inicializarDashboard();
-        } else {
-            console.error('No se encontró la función inicializarDashboard.');
-        }
-        return;
-    }
 
     const url = viewMap[view];
     if (!url) return;
 
     $('#main-content').load(url, function () {
-        // Tickets: la función ya está cargada globalmente, solo la llamamos
         if (view === 'tickets' && typeof extraerTickets === 'function') {
             extraerTickets();
         }
-        // Crear ticket: cargar categorías y prioridades desde la BD
         if (view === 'form_user') {
             cargarSelectsFormTicket();
         }
-        // Usuarios / Configuraciones: forzar re-ejecución del JS en cada visita
+        // Si es el dashboard, llamamos la función para graficar
+        if (view === 'dashboard' && typeof inicializarDashboard === 'function') {
+            inicializarDashboard();
+        }
+        
         if (scriptMap[view]) {
             $.getScript(scriptMap[view]);
         }
     });
 }
-
 // ── Nav activo + carga de vista ───────────────────────────────────────────────
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function(e) {

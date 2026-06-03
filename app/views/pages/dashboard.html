@@ -1,0 +1,70 @@
+<div class="page-title d-flex justify-content-between align-items-center">
+    <div>
+        <h1>Análisis de Tickets</h1>
+        <p>Monitoreo de rendimiento del sistema</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        
+        <div id="inline-loading" class="align-items-center gap-2" style="display: none; font-size: 13px;">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            <span style="color: white; font-weight: bold;">cargando...</span>
+        </div>
+
+        <select id="filtro-tiempo" class="form-control" style="width: 200px; background: #16203a; color: white; border: 1px solid var(--border);">
+            <option value="24h">Últimas 24 Horas</option>
+            <option value="7d">Últimos 7 Días</option>
+            <option value="30d" selected>Últimos 30 Días</option>
+        </select>
+    </div>
+</div>
+
+<div id="dashboard-data-container">
+    <div class="stats-grid mt-4">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-val" id="kpi-abiertos">0</div>
+                <div class="stat-label">Abiertos</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-val" id="kpi-progreso" style="color: #fbbf24;">0</div>
+                <div class="stat-label">En Progreso</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-val" id="kpi-cerrados" style="color: #34d399;">0</div>
+                <div class="stat-label">Cerrados</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header"><h3>Evolución de Tickets</h3></div>
+                <div class="card-body">
+                    <div id="chart-evolucion"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header"><h3>Tiempos Promedio</h3></div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label style="color: #8aa0bb; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="d-block mb-2">1ra Respuesta</label>
+                        <h2 id="time-respuesta" style="color: #fff;">0.0 <small style="color: #5a7a9a; font-size: 14px;">hrs</small></h2>
+                    </div>
+                    <hr style="border-top: 1px solid var(--border)">
+                    <div>
+                        <label style="color: #8aa0bb; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="d-block mb-2">Resolución Final</label>
+                        <h2 id="time-resolucion" style="color: #fff;">0.0 <small style="color: #5a7a9a; font-size: 14px;">hrs</small></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
