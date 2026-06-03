@@ -26,7 +26,7 @@ try {
         FROM tickets WHERE fecha_creacion >= NOW() - $intervalo");
     $kpis = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // PROMEDIOS DE TIEMPO
+    // 2. PROMEDIOS DE TIEMPO
     $stmtTiempos = $db->query("SELECT 
         AVG(TIMESTAMPDIFF(MINUTE, fecha_creacion, fecha_primera_respuesta)) / 60 as avg_respuesta,
         AVG(TIMESTAMPDIFF(MINUTE, fecha_creacion, fecha_finalizado)) / 60 as avg_resolucion
@@ -34,22 +34,41 @@ try {
         WHERE fecha_creacion >= NOW() - $intervalo");
     $tiempos = $stmtTiempos->fetch(PDO::FETCH_ASSOC);
 
-    // DATOS PARA LA GRÁFICA - Usando 'estado_id' y ordenamiento por fecha
-    $stmtGrafica = $db->query("SELECT 
-        DATE_FORMAT(fecha_creacion, '%d %b') as fecha,
-        COUNT(*) as nuevos,
-        SUM(CASE WHEN estado_id = 3 THEN 1 ELSE 0 END) as cerrados
-        FROM tickets 
-        WHERE fecha_creacion >= NOW() - $intervalo
-        GROUP BY DATE(fecha_creacion)
-        ORDER BY DATE(fecha_creacion) ASC");
+    // ── CAMBIO AQUÍ: DATOS PARA LA GRÁFICA DINÁMICA (HORAS VS DÍAS) ──
+    if ($periodo === '24h') {
+        // Si son 24 horas, formateamos como "08:00" y agrupamos por hora exacta
+        $sqlGrafica = "SELECT 
+            DATE_FORMAT(fecha_creacion, '%H:00') as fecha,
+            COUNT(*) as nuevos,
+            SUM(CASE WHEN estado_id = 3 THEN 1 ELSE 0 END) as cerrados
+            FROM tickets 
+            WHERE fecha_creacion >= NOW() - $intervalo
+            GROUP BY DATE_FORMAT(fecha_creacion, '%Y-%m-%d %H')
+            ORDER BY fecha_creacion ASC";
+    } else {
+        // Si son 7d o 30d, mantenemos el formato por días ("03 Jun")
+        $sqlGrafica = "SELECT 
+            DATE_FORMAT(fecha_creacion, '%d %b') as fecha,
+            COUNT(*) as nuevos,
+            SUM(CASE WHEN estado_id = 3 THEN 1 ELSE 0 END) as cerrados
+            FROM tickets 
+            WHERE fecha_creacion >= NOW() - $intervalo
+            GROUP BY DATE(fecha_creacion)
+            ORDER BY DATE(fecha_creacion) ASC";
+    }
+
+    $stmtGrafica = $db->query($sqlGrafica);
     $grafica = $stmtGrafica->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode([
-        'status' => 'success',
-        'kpis' => $kpis,
+        'status'  => 'success',
+        'kpis'    => [
+            'abiertos'    => (int)($kpis['abiertos'] ?? 0),
+            'en_progreso' => (int)($kpis['en_progreso'] ?? 0),
+            'cerrados'    => (int)($kpis['cerrados'] ?? 0)
+        ],
         'tiempos' => [
-            'respuesta' => round($tiempos['avg_respuesta'] ?? 0, 1),
+            'respuesta'  => round($tiempos['avg_respuesta'] ?? 0, 1),
             'resolucion' => round($tiempos['avg_resolucion'] ?? 0, 1)
         ],
         'grafica' => $grafica
@@ -58,3 +77,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
+?>
