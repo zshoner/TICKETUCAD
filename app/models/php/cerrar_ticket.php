@@ -2,40 +2,37 @@
 require_once 'conexion.php';
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['ticket_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Solicitud inválida']);
-    exit;
-}
+$ticket_id = $_POST['ticket_id'] ?? null;
+// Cambia a estado de cerrado
+$estado_cerrado_id = 3; 
 
-$ticketId = (int) $_POST['ticket_id'];
-if ($ticketId <= 0) {
-    echo json_encode(['success' => false, 'message' => 'ID de ticket inválido']);
+if (!$ticket_id) {
+    echo json_encode(["success" => false, "message" => "ID de ticket no proporcionado."]);
     exit;
 }
 
 try {
-    $sql = "SELECT id, nombre FROM estados_ticket 
-            WHERE LOWER(nombre) LIKE '%cerrad%' 
-               OR LOWER(nombre) LIKE '%finaliz%'
-               OR LOWER(nombre) LIKE '%resuel%'
-            ORDER BY id ASC 
-            LIMIT 1";
-    $row = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
-
-    if (!$row) {
-        echo json_encode(['success' => false, 'message' => 'No hay un estado de cierre en la base (ej. Cerrado).']);
-        exit;
-    }
-
-    $upd = $pdo->prepare("UPDATE tickets SET estado_id = ? WHERE id = ?");
-    $upd->execute([(int) $row['id'], $ticketId]);
+    // Actualizamos el estado, la fecha de actualización Y la fecha de finalizado
+    $sql = "UPDATE tickets 
+            SET estado_id = :estado_id, 
+                fecha_actualizacion = NOW(), 
+                fecha_finalizado = NOW() 
+            WHERE id = :ticket_id";
+            
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':estado_id' => $estado_cerrado_id,
+        ':ticket_id' => $ticket_id
+    ]);
 
     echo json_encode([
-        'success' => true,
-        'estado_id' => (int) $row['id'],
-        'estado_nombre' => $row['nombre'],
+        "success" => true, 
+        "message" => "Ticket cerrado con éxito.",
+        "estado_nombre" => "Cerrado"
     ]);
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Error al cerrar el ticket']);
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
 }
 ?>
