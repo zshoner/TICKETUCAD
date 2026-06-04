@@ -9,7 +9,15 @@ try {
     $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
-    die("Error de conexión a la base de datos: " . $e->getMessage());
+    if (!headers_sent()) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(503);
+    }
+    echo json_encode([
+        'status'  => 'error',
+        'message' => 'Error de conexión a la base de datos.',
+    ]);
+    exit;
 }
 
 $conexion = @mysqli_connect($host, $username, $password, $dbname, $port);
