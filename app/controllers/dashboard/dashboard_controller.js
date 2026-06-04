@@ -20,7 +20,7 @@ function inicializarDashboard() {
                 document.getElementById('kpi-progreso').innerText = res.kpis.en_progreso || 0;
                 document.getElementById('kpi-cerrados').innerText = res.kpis.cerrados || 0;
                 
-                document.getElementById('time-respuesta').innerHTML = `${res.tiempos.respuesta} <small style="color: #5a7a9a; font-size: 14px;">hrs</small>`;
+                // Mantenemos únicamente la Resolución Final
                 document.getElementById('time-resolucion').innerHTML = `${res.tiempos.resolucion} <small style="color: #5a7a9a; font-size: 14px;">hrs</small>`;
 
                 renderizarGrafica(res.grafica);
