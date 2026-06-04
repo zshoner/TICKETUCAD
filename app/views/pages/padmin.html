@@ -2,9 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
     <title>Panel Administrador | Ticket UCAD</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/fonts/inter/inter.css">
@@ -206,30 +203,6 @@
 </head>
 <body>
 
-<!-- Evitar que el historial muestre la página tras logout -->
-<script>
-    // Si la página viene del bfcache o el navegador muestra una copia en 'back', recargar para validar sesión
-    window.addEventListener('pageshow', function (event) {
-        if (event.persisted) {
-            window.location.replace('/TICKETUCAD/inicio-sesion');
-        }
-    });
-
-    // Si no hay datos de sesión local, redirigir inmediatamente (previene render estático en cache)
-    (function(){
-        try {
-            var nombre = sessionStorage.getItem('ucad_nombre');
-            var rol = sessionStorage.getItem('ucad_rol');
-            if (!nombre || !rol) {
-                // No usar replace si ya estamos en la página de login
-                if (window.location.pathname !== '/TICKETUCAD/inicio-sesion') {
-                    window.location.replace('/TICKETUCAD/inicio-sesion');
-                }
-            }
-        } catch (e) {}
-    })();
-</script>
-
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
         <img src="/TICKETUCAD/media/img/logo.png" alt="Logo">
@@ -273,7 +246,7 @@
                 <div class="user-name">Administrador</div>
                 <div class="user-role">Super Admin</div>
             </div>
-            <button id="btnLogout" class="btn-logout" title="Cerrar sesión">
+            <button class="btn-logout" title="Cerrar sesión" onclick="fetch('/TICKETUCAD/app/models/login/logout.php',{method:'POST'}).finally(()=>{ sessionStorage.clear(); window.location.href='/TICKETUCAD/inicio-sesion'; })">
                 <i class="bi bi-box-arrow-right"></i>
             </button>
         </div>
@@ -297,14 +270,11 @@
         </div>
 </div>
 
-<!-- CSS -->
 <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/fontawesome/css/all.min.css"/>
 <link rel="stylesheet" href="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.css"/>
 <link rel="stylesheet" href="/TICKETUCAD/recursos/datatables-bs4/css/dataTables.bootstrap4.min.css"/>
 <link rel="stylesheet" href="/TICKETUCAD/recursos/datatables-responsive/css/responsive.bootstrap4.min.css"/>
 <link rel="stylesheet" href="/TICKETUCAD/recursos/css/select2.min.css"/>
-
-<!-- Librerías base -->
 <script src="/TICKETUCAD/recursos/libs/jquery/jquery.min.js"></script>
 <script src="/TICKETUCAD/recursos/libs/bootstrap4/js/bootstrap.bundle.min.js"></script>
 <script src="/TICKETUCAD/recursos/libs/sweetalert2/sweetalert2.min.js"></script>
@@ -312,18 +282,18 @@
 <script src="/TICKETUCAD/recursos/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/TICKETUCAD/recursos/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/TICKETUCAD/recursos/js/select2.min.js"></script>
+<script src="/TICKETUCAD/app/controllers/menu_rol/menu_rol.js?v=20260531"></script>
+<script src="/TICKETUCAD/app/controllers/login/padmin.js?v=20260531"></script>
+<script src="/TICKETUCAD/app/controllers/tickets/tickets.js"></script>
+<script src="/TICKETUCAD/app/controllers/toast/toast_ticket.js"></script>
 
-<!-- Gráficas y PDF (local) -->
 <script src="/TICKETUCAD/recursos/js/apexcharts.min.js"></script>
+
 <script src="/TICKETUCAD/recursos/js/pdf/jspdf.umd.min.js"></script>
 <script src="/TICKETUCAD/recursos/js/pdf/jspdf.plugin.autotable.min.js"></script>
 
-<!-- Controladores de la app -->
-<script src="/TICKETUCAD/app/controllers/login/auth.js?v=20260601"></script>
-<script src="/TICKETUCAD/app/controllers/menu_rol/menu_rol.js?v=20260531"></script>
-<script src="/TICKETUCAD/app/controllers/login/padmin.js?v=20260601"></script>
-<script src="/TICKETUCAD/app/controllers/tickets/tickets.js"></script>
-<script src="/TICKETUCAD/app/controllers/toast/toast_ticket.js?v=20260531b"></script>
 <script src="/TICKETUCAD/app/controllers/dashboard/dashboard_controller.js"></script>
+
+<script src="/TICKETUCAD/recursos/libs/apexcharts/apexcharts.min.js"></script>
 </body>
 </html>

@@ -1,17 +1,6 @@
 RewriteEngine On
 RewriteBase /TICKETUCAD/
 
-# Desactivar protección especial de JS en app/controllers para permitir acceso directo
-
-# Bloquear acceso directo a las vistas protegidas y devolver 404
-RewriteRule ^app/views/(pages|forms)/ - [R=404,L]
-
-# Archivos PHP de backend solo via AJAX; acceso directo devuelve 404
-RewriteCond %{REQUEST_URI} ^/TICKETUCAD/app/models/ [NC]
-RewriteCond %{REQUEST_URI} \.php$ [NC]
-RewriteCond %{HTTP:X-Requested-With} !XMLHttpRequest [NC]
-RewriteRule .* - [R=404,L]
-
 # Pagina 404 personalizada (tematica alienigena)
 ErrorDocument 404 /TICKETUCAD/app/views/errors/404.html
 
@@ -22,30 +11,30 @@ ServerSignature Off
 RewriteRule ^$ inicio-sesion [R=302,L]
 
 # Ruta amigable para el login
-RewriteRule ^inicio-sesion/?$ app/router/view.php?view=login [L,NC]
+RewriteRule ^inicio-sesion/?$ app/views/pages/login.html [L,NC]
 
 # Ruta amigable para el panel de administrador
-RewriteRule ^panel-administrador/?$ app/router/view.php?view=padmin [L,NC]
+RewriteRule ^panel-administrador/?$ app/views/pages/padmin.html [L,NC]
 
 # Ruta amigable para formulario
-RewriteRule ^formulario-usuario/?$ app/router/view.php?view=form_user [L,NC]
+RewriteRule ^formulario-usuario/?$ app/views/forms/form_user.html [L,NC]
 
 # Ruta amigable para evitar la redirección al generar reportes
-RewriteRule ^reportes-sistema/?$ app/router/view.php?view=reportes [L,NC]
+RewriteRule ^reportes-sistema/?$ app/views/pages/reportes.php [L,NC]
 
 # Ruta amigable para administración de usuarios
-RewriteRule ^admin-usuarios/?$ app/router/view.php?view=usuarios [L,NC]
+RewriteRule ^admin-usuarios/?$ app/views/pages/usuarios.html [L,NC]
 
 # Ruta amigable para configuraciones
-RewriteRule ^configuraciones/?$ app/router/view.php?view=configuracion [L,NC]
+RewriteRule ^configuraciones/?$ app/views/pages/configuraciones.html [L,NC]
 
 # Ruta amigable para cambiar contraseña
-RewriteRule ^cambiar-password/?$ app/router/view.php?view=cambiar_password [L,NC]
+RewriteRule ^cambiar-password/?$ app/views/pages/cambiar_password.html [L,NC]
 
 # Ruta amigable para vista detalle de ticket
-RewriteRule ^vista-ticket/?$ app/router/view.php?view=vista_ticket [L,NC]
+RewriteRule ^vista-ticket/?$ app/views/pages/vista_ticket.html [L,NC]
 
 # Compatibilidad con rutas antiguas de detalle
-RewriteRule ^pages/vista_ticket\.html$ app/router/view.php?view=vista_ticket [L,NC]
-RewriteRule ^pages/vista-ticket\.html$ app/router/view.php?view=vista_ticket [L,NC]
-RewriteRule ^pages/vista%20ticket\.html$ app/router/view.php?view=vista_ticket [L,NC]
+RewriteRule ^pages/vista_ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
+RewriteRule ^pages/vista-ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
+RewriteRule ^pages/vista%20ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
