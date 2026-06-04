@@ -98,31 +98,52 @@ async function cargarDetalleTicket(ticketId) {
     document.getElementById('msgAcciones').textContent = '';
 
     try {
-        const [resTicket, resEst, resUsu, resCat] = await Promise.all([
-            fetch(`/TICKETUCAD/app/models/php/obtener_ticket.php?id=${encodeURIComponent(ticketId)}`),
-            fetch('/TICKETUCAD/app/models/php/obtener_estados.php'),
-            fetch('/TICKETUCAD/app/models/php/obtener_usuarios.php'),
-            fetch('/TICKETUCAD/app/models/php/obtener_categorias.php'),
-        ]);
+        // 1. OBTENER EL TICKET (Esto siempre se pide al servidor porque cambia constantemente)
+        const resTicket = await fetch(`/TICKETUCAD/app/models/php/obtener_ticket.php?id=${encodeURIComponent(ticketId)}`);
+        const dataTicket = await resTicket.json();
 
-        const data = await resTicket.json();
-        const estados = await resEst.json();
-        const usuarios = await resUsu.json();
-        const categorias = await resCat.json();
-
-        if (!data.success) {
+        if (!dataTicket.success) {
             titulo.textContent = 'Ticket no encontrado';
-            desc.textContent = data.message || 'No se encontró información del ticket.';
+            desc.textContent = dataTicket.message || 'No se encontró información del ticket.';
             document.getElementById('metaTicket').innerHTML = '';
             return;
         }
 
-        const t = data.ticket;
+        // 2. LÓGICA DE CACHÉ PARA CATÁLOGOS
+        let estados, usuarios, categorias;
+        const catalogosEnMemoria = sessionStorage.getItem('ucad_catalogos');
+
+        if (catalogosEnMemoria) {
+            // Si ya cargamos los catálogos antes, los sacamos de la memoria (¡Cero peticiones al servidor!)
+            const catalogos = JSON.parse(catalogosEnMemoria);
+            estados = catalogos.estados;
+            usuarios = catalogos.usuarios;
+            categorias = catalogos.categorias;
+        } else {
+            // Si es el primer ticket que abrimos, hacemos las peticiones a tus 3 archivos originales
+            const [resEst, resUsu, resCat] = await Promise.all([
+                fetch('/TICKETUCAD/app/models/php/obtener_estados.php'),
+                fetch('/TICKETUCAD/app/models/php/obtener_usuarios.php'),
+                fetch('/TICKETUCAD/app/models/php/obtener_categorias.php'),
+            ]);
+
+            estados = await resEst.json();
+            usuarios = await resUsu.json();
+            categorias = await resCat.json();
+
+            // Guardamos los resultados en la memoria temporal para la próxima vez
+            sessionStorage.setItem('ucad_catalogos', JSON.stringify({ estados, usuarios, categorias }));
+        }
+
+        // 3. PINTAR LA INTERFAZ
+        const t = dataTicket.ticket;
         titulo.textContent = `#${t.id} - ${t.titulo}`;
         desc.textContent = t.descripcion || 'Sin descripción.';
 
+        // Usamos tus funciones originales para pintar y enlazar los controles
         pintarControlesTicket(t, estados, usuarios, categorias);
         enlazarControles(ticketId);
+
     } catch (err) {
         titulo.textContent = 'Error al cargar ticket';
         desc.textContent = 'Ocurrió un error al consultar el detalle.';
