@@ -1,40 +1,41 @@
 RewriteEngine On
 RewriteBase /TICKETUCAD/
 
-# Pagina 404 personalizada (tematica alienigena)
+# ── Página 404 personalizada ──────────────────────────────────────────────────
 ErrorDocument 404 /TICKETUCAD/app/views/errors/404.html
 
-# Ocultar version de Apache en headers (seguridad)
+# Ocultar versión de Apache
 ServerSignature Off
 
-# Redirigir raíz al login
+# ── 3. Bloquear acceso directo a vistas HTML ──────────────────────────────────
+# La protección real es view.php (verifica sesión). Aquí bloqueamos navegación
+# directa desde fuera del dominio o sin referer.
+RewriteCond %{HTTP_ACCEPT} text/html [NC]
+RewriteCond %{HTTP:X-Requested-With} !XMLHttpRequest [NC]
+RewriteCond %{HTTP_REFERER} !^http://localhost/TICKETUCAD/ [NC]
+RewriteRule ^app/views/(pages|forms)/.+\.html$ - [R=404,L]
+
+# ── 4. Bloquear acceso directo a PHP del backend ─────────────────────────────
+# Los fetch() del front pasan normalmente (no mandan Accept: text/html).
+RewriteCond %{HTTP_ACCEPT} text/html [NC]
+RewriteCond %{HTTP:X-Requested-With} !XMLHttpRequest [NC]
+RewriteCond %{HTTP_REFERER} !^http://localhost/TICKETUCAD/ [NC]
+RewriteRule ^app/models/.+\.php$ - [R=404,L]
+
+# ── 5. Redirigir raíz al login ────────────────────────────────────────────────
 RewriteRule ^$ inicio-sesion [R=302,L]
 
-# Ruta amigable para el login
-RewriteRule ^inicio-sesion/?$ app/views/pages/login.html [L,NC]
+# ── 6. Rutas amigables ────────────────────────────────────────────────────────
+RewriteRule ^inicio-sesion/?$       app/router/view.php?view=login            [L,NC]
+RewriteRule ^panel-administrador/?$ app/router/view.php?view=padmin            [L,NC]
+RewriteRule ^formulario-usuario/?$  app/router/view.php?view=form_user         [L,NC]
+RewriteRule ^reportes-sistema/?$    app/router/view.php?view=reportes          [L,NC]
+RewriteRule ^admin-usuarios/?$      app/router/view.php?view=usuarios          [L,NC]
+RewriteRule ^configuraciones/?$     app/router/view.php?view=configuracion     [L,NC]
+RewriteRule ^cambiar-password/?$    app/router/view.php?view=cambiar_password  [L,NC]
+RewriteRule ^vista-ticket/?$        app/router/view.php?view=vista_ticket      [L,NC]
 
-# Ruta amigable para el panel de administrador
-RewriteRule ^panel-administrador/?$ app/views/pages/padmin.html [L,NC]
-
-# Ruta amigable para formulario
-RewriteRule ^formulario-usuario/?$ app/views/forms/form_user.html [L,NC]
-
-# Ruta amigable para evitar la redirección al generar reportes
-RewriteRule ^reportes-sistema/?$ app/views/pages/reportes.php [L,NC]
-
-# Ruta amigable para administración de usuarios
-RewriteRule ^admin-usuarios/?$ app/views/pages/usuarios.html [L,NC]
-
-# Ruta amigable para configuraciones
-RewriteRule ^configuraciones/?$ app/views/pages/configuraciones.html [L,NC]
-
-# Ruta amigable para cambiar contraseña
-RewriteRule ^cambiar-password/?$ app/views/pages/cambiar_password.html [L,NC]
-
-# Ruta amigable para vista detalle de ticket
-RewriteRule ^vista-ticket/?$ app/views/pages/vista_ticket.html [L,NC]
-
-# Compatibilidad con rutas antiguas de detalle
-RewriteRule ^pages/vista_ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
-RewriteRule ^pages/vista-ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
-RewriteRule ^pages/vista%20ticket\.html$ app/views/pages/vista_ticket.html [L,NC]
+# Compatibilidad con rutas antiguas
+RewriteRule ^pages/vista_ticket\.html$   app/router/view.php?view=vista_ticket [L,NC]
+RewriteRule ^pages/vista-ticket\.html$   app/router/view.php?view=vista_ticket [L,NC]
+RewriteRule ^pages/vista%20ticket\.html$ app/router/view.php?view=vista_ticket [L,NC]

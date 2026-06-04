@@ -1,6 +1,13 @@
 <?php
-include 'conexion.php';
+session_start();
+header('Content-Type: application/json');
 
+if (!isset($_SESSION['usuario_id'])) {
+    echo json_encode(['status' => 'restricted', 'message' => 'No autenticado.']);
+    exit;
+}
+
+include 'conexion.php';
 
     $sql = "SELECT 
             TK.id AS '#', 
